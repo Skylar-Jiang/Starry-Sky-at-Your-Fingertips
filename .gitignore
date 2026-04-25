@@ -1,46 +1,56 @@
-# Python 缓存
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# 虚拟环境
+*.class
 .venv/
 venv/
 env/
 ENV/
-
-# Jupyter Notebook
-.ipynb_checkpoints/
-
-# 测试/覆盖率
 .pytest_cache/
 .coverage
 htmlcov/
-.tox/
-.nox/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
-# 打包/构建产物
-build/
+# Node / Frontend
+node_modules/
+**/node_modules/
+.vite/
+**/.vite/
 dist/
-*.egg-info/
-.eggs/
+build/
+coverage/
+.next/
+.nuxt/
+.svelte-kit/
 
-# IDE / 编辑器
-.vscode/
-.idea/
-
-# 系统文件
-.DS_Store
-Thumbs.db
-
-# 日志文件
-*.log
-
-# 环境变量文件
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# 临时文件
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Temp files
 *.tmp
 *.temp
+*.bak
+
+# Archives / large files
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
