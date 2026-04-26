@@ -1,6 +1,6 @@
 import { BookOpen, Sparkles, Telescope, Trash2, WandSparkles } from "lucide-react";
 import { emotionConfig } from "../config/emotionConfig";
-import AssetPlaceholder from "./AssetPlaceholder";
+import CharacterActor from "./CharacterActor";
 import PaperNote from "./PaperNote";
 import SceneEffects from "./SceneEffects";
 import StarLayer from "./StarLayer";
@@ -19,11 +19,7 @@ export default function MainScene({
 
   return (
     <main className={`main-scene emotion-${currentEmotion}`}>
-      <AssetPlaceholder
-        className="scene-background-placeholder"
-        fileName={config.background.replace("/assets/", "assets/")}
-        label={`${config.label}背景`}
-      />
+      <img className="scene-background-image" src={config.background} alt="" aria-hidden="true" />
       <div className="scene-overlay" />
       <SceneEffects emotion={currentEmotion} />
 
@@ -61,11 +57,12 @@ export default function MainScene({
             <p>把今天写成纸条，折起来，交给这片星空。</p>
           </div>
 
-          <div className="scene-asset-map" aria-label="第一阶段美工素材占位">
-            <AssetPlaceholder fileName={config.planet.replace("/assets/", "assets/")} label="小星球地面" />
-            <AssetPlaceholder fileName={config.character.replace("/assets/", "assets/")} label="主角状态" />
-            <AssetPlaceholder fileName={config.fox.replace("/assets/", "assets/")} label="狐狸状态" />
-            <AssetPlaceholder fileName={config.rose.replace("/assets/", "assets/")} label="玫瑰状态" />
+          <div className="scene-visuals" aria-label="情绪角色画面">
+            <CharacterActor emotion={currentEmotion} />
+            <div className="companion-placeholders" aria-hidden="true">
+              <span>{config.fox.replace("/assets/", "assets/")}</span>
+              <span>{config.rose.replace("/assets/", "assets/")}</span>
+            </div>
           </div>
 
           <div className="stage-actions" aria-label="主操作">

@@ -29,33 +29,34 @@ export default function DiaryModal({ isOpen, onClose, onSubmit }) {
 
   return (
     <div className="modal-backdrop">
-      <form className="diary-modal" onSubmit={handleSubmit} role="dialog" aria-label="记录情绪">
-        <div className="modal-heading">
-          <div>
-            <p className="eyebrow">星空日记</p>
-            <h2>写下此刻的心情</h2>
-          </div>
-          <button className="icon-button" type="button" onClick={onClose} aria-label="关闭">
-            <X size={20} />
-          </button>
-        </div>
+      <form className="diary-modal paper-writing-modal" onSubmit={handleSubmit} role="dialog" aria-label="记录情绪">
+        <button className="icon-button paper-close-button" type="button" onClick={onClose} aria-label="关闭">
+          <X size={20} />
+        </button>
 
-        <label className="field-label" htmlFor="diary-text">
-          想交给星空的话
-        </label>
-        <textarea
-          id="diary-text"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          placeholder="今天有点累，但我想把它交给星空"
-          rows={6}
-        />
+        <p className="paper-state">等待折成纸团</p>
+
+        <div className="writing-paper">
+          <img src="/assets/objects/paper_flat.png" alt="信纸" />
+          <label className="visually-hidden" htmlFor="diary-text">
+            想交给星空的话
+          </label>
+          <textarea
+            id="diary-text"
+            className="paper-textarea"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="今天有点累，但我想把它交给星空"
+            rows={8}
+            autoFocus
+          />
+        </div>
 
         <EmotionSelector value={emotion} onChange={setEmotion} />
 
-        {error ? <p className="form-error">{error}</p> : null}
+        {error ? <p className="form-error paper-form-error">{error}</p> : null}
 
-        <div className="modal-actions">
+        <div className="modal-actions paper-actions">
           <button className="secondary-button" type="button" onClick={onClose}>
             取消
           </button>

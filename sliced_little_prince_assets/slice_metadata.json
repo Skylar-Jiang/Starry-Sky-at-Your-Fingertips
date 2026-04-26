@@ -1,0 +1,2567 @@
+[
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      9,
+      26,
+      307,
+      336
+    ],
+    "size_px": [
+      298,
+      310
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      30,
+      614,
+      337
+    ],
+    "size_px": [
+      307,
+      307
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      614,
+      29,
+      922,
+      338
+    ],
+    "size_px": [
+      308,
+      309
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      36,
+      1229,
+      341
+    ],
+    "size_px": [
+      307,
+      305
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 5,
+    "grid_row": 1,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      28,
+      1494,
+      340
+    ],
+    "size_px": [
+      265,
+      312
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      8,
+      363,
+      307,
+      666
+    ],
+    "size_px": [
+      299,
+      303
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      367,
+      614,
+      668
+    ],
+    "size_px": [
+      307,
+      301
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      614,
+      366,
+      922,
+      675
+    ],
+    "size_px": [
+      308,
+      309
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 9,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      368,
+      1229,
+      675
+    ],
+    "size_px": [
+      307,
+      307
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 10,
+    "grid_row": 2,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      368,
+      1468,
+      677
+    ],
+    "size_px": [
+      239,
+      309
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 11,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      38,
+      693,
+      307,
+      987
+    ],
+    "size_px": [
+      269,
+      294
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 12,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      696,
+      614,
+      987
+    ],
+    "size_px": [
+      307,
+      291
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 13,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      636,
+      694,
+      909,
+      987
+    ],
+    "size_px": [
+      273,
+      293
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 14,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      927,
+      706,
+      1229,
+      987
+    ],
+    "size_px": [
+      302,
+      281
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子与玫瑰互动开心.png",
+    "slug": "happy_rose_interaction",
+    "frame": 15,
+    "grid_row": 3,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      708,
+      1484,
+      987
+    ],
+    "size_px": [
+      255,
+      279
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      31,
+      11,
+      256,
+      256
+    ],
+    "size_px": [
+      225,
+      245
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      13,
+      512,
+      256
+    ],
+    "size_px": [
+      256,
+      243
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      13,
+      768,
+      256
+    ],
+    "size_px": [
+      256,
+      243
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      14,
+      1024,
+      256
+    ],
+    "size_px": [
+      256,
+      242
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 5,
+    "grid_row": 1,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      14,
+      1280,
+      256
+    ],
+    "size_px": [
+      256,
+      242
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 6,
+    "grid_row": 1,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1280,
+      16,
+      1425,
+      256
+    ],
+    "size_px": [
+      145,
+      240
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      48,
+      256,
+      256,
+      512
+    ],
+    "size_px": [
+      208,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      256,
+      512,
+      512
+    ],
+    "size_px": [
+      256,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 9,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      256,
+      768,
+      512
+    ],
+    "size_px": [
+      256,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 10,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      256,
+      1024,
+      512
+    ],
+    "size_px": [
+      256,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 11,
+    "grid_row": 2,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      256,
+      1280,
+      512
+    ],
+    "size_px": [
+      256,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 12,
+    "grid_row": 2,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1280,
+      256,
+      1512,
+      512
+    ],
+    "size_px": [
+      232,
+      256
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 13,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      81,
+      517,
+      256,
+      764
+    ],
+    "size_px": [
+      175,
+      247
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 14,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      519,
+      512,
+      763
+    ],
+    "size_px": [
+      256,
+      244
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 15,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      516,
+      768,
+      761
+    ],
+    "size_px": [
+      256,
+      245
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 16,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      772,
+      512,
+      1013,
+      765
+    ],
+    "size_px": [
+      241,
+      253
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 17,
+    "grid_row": 3,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      517,
+      1280,
+      768
+    ],
+    "size_px": [
+      256,
+      251
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 18,
+    "grid_row": 3,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1280,
+      518,
+      1509,
+      762
+    ],
+    "size_px": [
+      229,
+      244
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 19,
+    "grid_row": 4,
+    "grid_col": 1,
+    "bbox_original_px": [
+      71,
+      768,
+      256,
+      1003
+    ],
+    "size_px": [
+      185,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 20,
+    "grid_row": 4,
+    "grid_col": 2,
+    "bbox_original_px": [
+      302,
+      768,
+      512,
+      1003
+    ],
+    "size_px": [
+      210,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 21,
+    "grid_row": 4,
+    "grid_col": 3,
+    "bbox_original_px": [
+      580,
+      768,
+      768,
+      1003
+    ],
+    "size_px": [
+      188,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 22,
+    "grid_row": 4,
+    "grid_col": 4,
+    "bbox_original_px": [
+      803,
+      768,
+      1009,
+      1003
+    ],
+    "size_px": [
+      206,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 23,
+    "grid_row": 4,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1036,
+      768,
+      1280,
+      1003
+    ],
+    "size_px": [
+      244,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子托腮平静.png",
+    "slug": "calm_chin_rest",
+    "frame": 24,
+    "grid_row": 4,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1280,
+      768,
+      1487,
+      1003
+    ],
+    "size_px": [
+      207,
+      235
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      25,
+      9,
+      276,
+      210
+    ],
+    "size_px": [
+      251,
+      201
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      346,
+      10,
+      606,
+      210
+    ],
+    "size_px": [
+      260,
+      200
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      658,
+      9,
+      914,
+      210
+    ],
+    "size_px": [
+      256,
+      201
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      968,
+      10,
+      1226,
+      210
+    ],
+    "size_px": [
+      258,
+      200
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 5,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      20,
+      210,
+      279,
+      421
+    ],
+    "size_px": [
+      259,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      344,
+      210,
+      598,
+      421
+    ],
+    "size_px": [
+      254,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      664,
+      210,
+      909,
+      421
+    ],
+    "size_px": [
+      245,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      975,
+      210,
+      1220,
+      421
+    ],
+    "size_px": [
+      245,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 9,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      38,
+      421,
+      282,
+      632
+    ],
+    "size_px": [
+      244,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 10,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      350,
+      421,
+      610,
+      632
+    ],
+    "size_px": [
+      260,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 11,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      669,
+      421,
+      895,
+      632
+    ],
+    "size_px": [
+      226,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 12,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      955,
+      421,
+      1239,
+      632
+    ],
+    "size_px": [
+      284,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 13,
+    "grid_row": 4,
+    "grid_col": 1,
+    "bbox_original_px": [
+      26,
+      637,
+      305,
+      835
+    ],
+    "size_px": [
+      279,
+      198
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 14,
+    "grid_row": 4,
+    "grid_col": 2,
+    "bbox_original_px": [
+      342,
+      638,
+      622,
+      835
+    ],
+    "size_px": [
+      280,
+      197
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 15,
+    "grid_row": 4,
+    "grid_col": 3,
+    "bbox_original_px": [
+      645,
+      632,
+      929,
+      835
+    ],
+    "size_px": [
+      284,
+      203
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱星星开心.png",
+    "slug": "happy_holding_star",
+    "frame": 16,
+    "grid_row": 4,
+    "grid_col": 4,
+    "bbox_original_px": [
+      1007,
+      632,
+      1232,
+      842
+    ],
+    "size_px": [
+      225,
+      210
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      0,
+      77,
+      256,
+      428
+    ],
+    "size_px": [
+      256,
+      351
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      77,
+      512,
+      426
+    ],
+    "size_px": [
+      256,
+      349
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      76,
+      768,
+      426
+    ],
+    "size_px": [
+      256,
+      350
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      79,
+      1024,
+      427
+    ],
+    "size_px": [
+      256,
+      348
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 5,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      0,
+      600,
+      256,
+      939
+    ],
+    "size_px": [
+      256,
+      339
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      597,
+      512,
+      939
+    ],
+    "size_px": [
+      256,
+      342
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      619,
+      768,
+      933
+    ],
+    "size_px": [
+      256,
+      314
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝低头伤心.png",
+    "slug": "sad_hug_knees",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      618,
+      1024,
+      973
+    ],
+    "size_px": [
+      256,
+      355
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      0,
+      18,
+      307,
+      339
+    ],
+    "size_px": [
+      307,
+      321
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      26,
+      614,
+      341
+    ],
+    "size_px": [
+      307,
+      315
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      670,
+      20,
+      922,
+      341
+    ],
+    "size_px": [
+      252,
+      321
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      22,
+      1229,
+      341
+    ],
+    "size_px": [
+      307,
+      319
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 5,
+    "grid_row": 1,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      27,
+      1458,
+      341
+    ],
+    "size_px": [
+      229,
+      314
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      45,
+      362,
+      277,
+      672
+    ],
+    "size_px": [
+      232,
+      310
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      385,
+      368,
+      568,
+      673
+    ],
+    "size_px": [
+      183,
+      305
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      685,
+      370,
+      846,
+      674
+    ],
+    "size_px": [
+      161,
+      304
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 9,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      367,
+      1229,
+      669
+    ],
+    "size_px": [
+      307,
+      302
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 10,
+    "grid_row": 2,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      366,
+      1524,
+      674
+    ],
+    "size_px": [
+      295,
+      308
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 11,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      57,
+      689,
+      288,
+      983
+    ],
+    "size_px": [
+      231,
+      294
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 12,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      350,
+      687,
+      567,
+      983
+    ],
+    "size_px": [
+      217,
+      296
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 13,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      616,
+      684,
+      832,
+      983
+    ],
+    "size_px": [
+      216,
+      299
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 14,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      939,
+      688,
+      1229,
+      983
+    ],
+    "size_px": [
+      290,
+      295
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子抱膝平静.png",
+    "slug": "calm_hug_knees",
+    "frame": 15,
+    "grid_row": 3,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1240,
+      688,
+      1482,
+      983
+    ],
+    "size_px": [
+      242,
+      295
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      15,
+      14,
+      316,
+      210
+    ],
+    "size_px": [
+      301,
+      196
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      326,
+      14,
+      632,
+      210
+    ],
+    "size_px": [
+      306,
+      196
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      635,
+      13,
+      946,
+      210
+    ],
+    "size_px": [
+      311,
+      197
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      948,
+      16,
+      1251,
+      210
+    ],
+    "size_px": [
+      303,
+      194
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 5,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      0,
+      210,
+      316,
+      421
+    ],
+    "size_px": [
+      316,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      316,
+      210,
+      632,
+      421
+    ],
+    "size_px": [
+      316,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      632,
+      210,
+      948,
+      421
+    ],
+    "size_px": [
+      316,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      948,
+      210,
+      1255,
+      421
+    ],
+    "size_px": [
+      307,
+      211
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 9,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      23,
+      425,
+      311,
+      632
+    ],
+    "size_px": [
+      288,
+      207
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 10,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      341,
+      425,
+      631,
+      632
+    ],
+    "size_px": [
+      290,
+      207
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 11,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      651,
+      432,
+      946,
+      632
+    ],
+    "size_px": [
+      295,
+      200
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 12,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      958,
+      431,
+      1253,
+      632
+    ],
+    "size_px": [
+      295,
+      201
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 13,
+    "grid_row": 4,
+    "grid_col": 1,
+    "bbox_original_px": [
+      27,
+      637,
+      306,
+      836
+    ],
+    "size_px": [
+      279,
+      199
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 14,
+    "grid_row": 4,
+    "grid_col": 2,
+    "bbox_original_px": [
+      343,
+      637,
+      622,
+      835
+    ],
+    "size_px": [
+      279,
+      198
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 15,
+    "grid_row": 4,
+    "grid_col": 3,
+    "bbox_original_px": [
+      645,
+      638,
+      930,
+      836
+    ],
+    "size_px": [
+      285,
+      198
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子枕头躺下.png",
+    "slug": "sleep_pillow",
+    "frame": 16,
+    "grid_row": 4,
+    "grid_col": 4,
+    "bbox_original_px": [
+      948,
+      632,
+      1239,
+      841
+    ],
+    "size_px": [
+      291,
+      209
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      25,
+      16,
+      307,
+      326
+    ],
+    "size_px": [
+      282,
+      310
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      20,
+      614,
+      326
+    ],
+    "size_px": [
+      307,
+      306
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      614,
+      14,
+      922,
+      327
+    ],
+    "size_px": [
+      308,
+      313
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      15,
+      1229,
+      328
+    ],
+    "size_px": [
+      307,
+      313
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 5,
+    "grid_row": 1,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      17,
+      1467,
+      328
+    ],
+    "size_px": [
+      238,
+      311
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      30,
+      346,
+      307,
+      659
+    ],
+    "size_px": [
+      277,
+      313
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      346,
+      614,
+      657
+    ],
+    "size_px": [
+      307,
+      311
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      614,
+      346,
+      922,
+      656
+    ],
+    "size_px": [
+      308,
+      310
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 9,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      351,
+      1229,
+      658
+    ],
+    "size_px": [
+      307,
+      307
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 10,
+    "grid_row": 2,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      350,
+      1464,
+      659
+    ],
+    "size_px": [
+      235,
+      309
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 11,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      4,
+      683,
+      307,
+      988
+    ],
+    "size_px": [
+      303,
+      305
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 12,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      307,
+      683,
+      614,
+      986
+    ],
+    "size_px": [
+      307,
+      303
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 13,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      614,
+      683,
+      922,
+      986
+    ],
+    "size_px": [
+      308,
+      303
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 14,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      922,
+      683,
+      1229,
+      988
+    ],
+    "size_px": [
+      307,
+      305
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子沙地画星星开心.png",
+    "slug": "happy_draw_star",
+    "frame": 15,
+    "grid_row": 3,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1229,
+      683,
+      1484,
+      988
+    ],
+    "size_px": [
+      255,
+      305
+    ],
+    "real_source_alpha": false,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      6,
+      44,
+      256,
+      322
+    ],
+    "size_px": [
+      250,
+      278
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      262,
+      46,
+      512,
+      322
+    ],
+    "size_px": [
+      250,
+      276
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      46,
+      768,
+      322
+    ],
+    "size_px": [
+      256,
+      276
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      42,
+      1024,
+      322
+    ],
+    "size_px": [
+      256,
+      280
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 5,
+    "grid_row": 1,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      45,
+      1278,
+      320
+    ],
+    "size_px": [
+      254,
+      275
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 6,
+    "grid_row": 1,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1284,
+      52,
+      1530,
+      320
+    ],
+    "size_px": [
+      246,
+      268
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      2,
+      354,
+      256,
+      683
+    ],
+    "size_px": [
+      254,
+      329
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      352,
+      512,
+      683
+    ],
+    "size_px": [
+      256,
+      331
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 9,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      353,
+      768,
+      628
+    ],
+    "size_px": [
+      256,
+      275
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 10,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      353,
+      1024,
+      683
+    ],
+    "size_px": [
+      256,
+      330
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 11,
+    "grid_row": 2,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      354,
+      1280,
+      683
+    ],
+    "size_px": [
+      256,
+      329
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 12,
+    "grid_row": 2,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1302,
+      361,
+      1530,
+      624
+    ],
+    "size_px": [
+      228,
+      263
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 13,
+    "grid_row": 3,
+    "grid_col": 1,
+    "bbox_original_px": [
+      3,
+      683,
+      256,
+      936
+    ],
+    "size_px": [
+      253,
+      253
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 14,
+    "grid_row": 3,
+    "grid_col": 2,
+    "bbox_original_px": [
+      260,
+      683,
+      512,
+      936
+    ],
+    "size_px": [
+      252,
+      253
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 15,
+    "grid_row": 3,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      683,
+      768,
+      935
+    ],
+    "size_px": [
+      256,
+      252
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 16,
+    "grid_row": 3,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      683,
+      1024,
+      936
+    ],
+    "size_px": [
+      256,
+      253
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 17,
+    "grid_row": 3,
+    "grid_col": 5,
+    "bbox_original_px": [
+      1024,
+      683,
+      1257,
+      936
+    ],
+    "size_px": [
+      233,
+      253
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子盘腿平静.png",
+    "slug": "calm_cross_legged",
+    "frame": 18,
+    "grid_row": 3,
+    "grid_col": 6,
+    "bbox_original_px": [
+      1280,
+      683,
+      1533,
+      936
+    ],
+    "size_px": [
+      253,
+      253
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 1,
+    "grid_row": 1,
+    "grid_col": 1,
+    "bbox_original_px": [
+      0,
+      18,
+      256,
+      506
+    ],
+    "size_px": [
+      256,
+      488
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 2,
+    "grid_row": 1,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      23,
+      512,
+      512
+    ],
+    "size_px": [
+      256,
+      489
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 3,
+    "grid_row": 1,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      23,
+      768,
+      507
+    ],
+    "size_px": [
+      256,
+      484
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 4,
+    "grid_row": 1,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      24,
+      1024,
+      512
+    ],
+    "size_px": [
+      256,
+      488
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 5,
+    "grid_row": 2,
+    "grid_col": 1,
+    "bbox_original_px": [
+      8,
+      534,
+      256,
+      962
+    ],
+    "size_px": [
+      248,
+      428
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 6,
+    "grid_row": 2,
+    "grid_col": 2,
+    "bbox_original_px": [
+      256,
+      512,
+      512,
+      1024
+    ],
+    "size_px": [
+      256,
+      512
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 7,
+    "grid_row": 2,
+    "grid_col": 3,
+    "bbox_original_px": [
+      512,
+      512,
+      768,
+      956
+    ],
+    "size_px": [
+      256,
+      444
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  },
+  {
+    "source_file": "小王子跺脚生气.png",
+    "slug": "angry_stomp",
+    "frame": 8,
+    "grid_row": 2,
+    "grid_col": 4,
+    "bbox_original_px": [
+      768,
+      512,
+      1024,
+      911
+    ],
+    "size_px": [
+      256,
+      399
+    ],
+    "real_source_alpha": true,
+    "resized": false
+  }
+]

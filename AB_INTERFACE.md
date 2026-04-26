@@ -79,6 +79,16 @@ onThrowComplete({
 
 技术 A 会根据 `recordId` 找到对应 record，把 `star` 写回并保存。
 
+## 纸团流程合并约定
+
+本次合并技术 B 的纸团视觉后，A/B 接口形状保持不变：
+
+- `PaperNote` 仍接收 `record={pendingRecord}`、`records={records}`、`onThrowComplete={handleThrowComplete}`。
+- 技术 B 的纸团投掷动画可以在组件内部播放；动画结束后再调用 `onThrowComplete({ recordId, star })`。
+- 当前动画时长约定为 `800ms`，只影响回调触发时机，不改变 payload 结构。
+- `records` 只用于生成星星位置时避开已有星星；B 不直接修改 `records`，也不直接写 localStorage。
+- 投掷中应避免重复触发 `onThrowComplete`，同一条 `pendingRecord` 只回传一次星星。
+
 点击星星时，技术 B 调用：
 
 ```js
