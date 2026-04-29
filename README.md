@@ -1,11 +1,6 @@
 # 指尖星空 第一阶段 Demo
 
-## 技术栈统一确认
-
-- 统一使用 React + Vite。
-- 包管理与脚本以 `package.json` 为准：`npm install`、`npm run dev`、`npm test`、`npm run build`。
-- 技术 A/B 共用 `src/config/emotionConfig.js` 管理情绪标签、背景、颜色和特效配置。
-- 第一阶段只实现稳定演示闭环，不接 Gemini、手势识别、录音、照片导入、3D 星盘、云端账号。
+这是一个 React + Vite 的第一阶段可运行演示版本。当前目标是跑通“记录情绪 -> 折成纸团 -> 投向星空 -> 生成星星 -> 点击回看”的完整闭环。
 
 ## 运行方式
 
@@ -14,30 +9,54 @@ npm install
 npm run dev
 ```
 
-## 技术 A 完成功能
+常用验证：
 
-- 主界面基础流程。
-- 记录情绪弹窗。
-- 文字输入。
-- 平静 / 开心 / 难过 三种情绪选择。
-- 完整 `record` 数据结构生成。
-- `pendingRecord` 对接技术 B。
-- `onThrowComplete({ recordId, star })` 接收星星坐标并回写。
-- 星星详情弹窗。
-- localStorage 本地保存与刷新恢复。
-- 开发阶段清空测试数据。
-
-## A/B 接口说明
-
-更完整的对接说明见 [AB_INTERFACE.md](./AB_INTERFACE.md)。
-
-技术 A 传给技术 B：
-
-```js
-pendingRecord: EmotionRecord | null
+```bash
+npm test
+npm run build
 ```
 
-技术 B 投掷完成后调用：
+## 当前完成内容
+
+- 技术 A 数据闭环：创建完整 `record`、保存 localStorage、刷新后恢复。
+- 技术 B 演示流：信纸展示、纸团折叠、投掷动画、星星落点。
+- 星星回看：点击星星打开详情，显示原文、情绪、时间和反馈。
+- 情绪场景：背景统一使用 `sky-finger (3).zip` 中的星空底图，开心/难过通过星星、角色和特效区分。
+- 场景特效：开心使用光点漂浮，难过使用代码雨效；雨不烘焙在背景里。
+- 新 zip 的 UI 效果已融合到现有闭环：新版背景、透明信纸、纸团、星星和投掷/特效动画。
+
+## 目录说明
+
+```text
+src/
+  App.jsx                         全局状态与主流程
+  components/                     页面、弹窗、纸团、星星、特效组件
+  config/emotionConfig.js         情绪标签、颜色、素材路径、反馈文案
+  utils/                          record、storage、时间、星星落点工具
+  __tests__/                      第一阶段闭环测试
+
+public/assets/
+  background/                     运行中的场景背景
+  character/                      运行中的小王子透明角色图
+  objects/                        信纸、纸团、星星
+  ui/                             新增按钮/弹窗原图，暂未直接叠加使用
+  needs-manual-cutout/            有白底或整张图集，需手动抠图后再接入
+  needs-manual-review/            背景/图集烘焙了不适合直接叠加的内容
+```
+
+## A/B 接口约定
+
+`App.jsx` 把待投掷记录传给纸团流程：
+
+```jsx
+<PaperNote
+  record={pendingRecord}
+  records={records}
+  onThrowComplete={handleThrowComplete}
+/>
+```
+
+纸团投掷完成后必须回传：
 
 ```js
 onThrowComplete({
@@ -46,15 +65,17 @@ onThrowComplete({
 });
 ```
 
-技术 B 的星星点击后调用：
+点击星星时调用：
 
 ```js
 onSelectStar(record);
 ```
 
+技术 B 不直接写 localStorage，不直接修改 `records`；保存和回写统一由 `App.jsx` 处理。
+
 ## record 数据结构
 
-`record` 包含：
+新建记录会保留后续阶段字段：
 
 ```js
 {
@@ -75,18 +96,11 @@ onSelectStar(record);
 }
 ```
 
-新建时 `star` 固定为 `null`，投掷完成后由技术 B 回传坐标。
+新建时 `star` 为 `null`，投掷完成后回写 `{ id, x, y }`。
 
-## 素材说明
+## 素材处理记录
 
-技术侧当前不把策划案截图当正式素材使用。页面使用占位框标注美工任务书中的预定素材名，例如：
-
-- `assets/background/bg_calm.png`
-- `assets/background/planet_ground.png`
-- `assets/character/traveler_calm.png`
-- `assets/objects/paper_flat.png`
-- `assets/objects/paper_ball.png`
-- `assets/objects/star_sad.png`
-- `assets/effects/rain_drop.png`
-
-美工后续只需要把同名文件放到 `public/assets` 对应目录，技术代码无需改文件名。
+- 已接入：`sky-finger (3).zip` 中的背景底图，作为 `bg_calm.png`、`bg_happy.png`、`bg_sad.png` 统一运行背景；`paper_flat.png`、`paper_ball.png`、`star_calm.png`、`star_happy.png`、`star_sad.png`、小王子三态透明角色图。
+- 未直接接入：狐狸、玫瑰、泪湖座图集等没有真实透明背景，已放入 `public/assets/needs-manual-cutout/`。
+- 未直接接入：整张纸团流程图集等会干扰程序特效或不是单体透明素材，已放入 `public/assets/needs-manual-review/`。
+- `public/assets/ui/` 中的新按钮和弹窗图保留为 UI 原图；当前页面继续使用可响应的按钮组件，避免图片文字和真实按钮文字重复。

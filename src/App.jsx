@@ -60,6 +60,13 @@ export default function App() {
     setCurrentEmotion(targetRecord.emotion);
   }
 
+  function handleCancelPendingRecord(recordId) {
+    const nextRecords = records.filter((record) => record.id !== recordId);
+    setRecords(nextRecords);
+    saveRecords(nextRecords);
+    setPendingRecord(null);
+  }
+
   function handleSelectStar(record) {
     setSelectedRecord(record);
   }
@@ -85,6 +92,7 @@ export default function App() {
         pendingRecord={pendingRecord}
         onOpenDiary={handleOpenDiary}
         onThrowComplete={handleThrowComplete}
+        onCancelPendingRecord={handleCancelPendingRecord}
         onSelectStar={handleSelectStar}
         onClearRecords={handleClearRecords}
       />

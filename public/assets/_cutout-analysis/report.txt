@@ -1,0 +1,22 @@
+[fox_reference_sheet_white_background.png] size=1376x768 components=1
+  1: x=0, y=0, w=1376, h=768
+
+[fox_sheet_white_background.png] size=1264x842 components=1
+  1: x=0, y=0, w=1264, h=842
+
+[rose_sheet_white_background.png] size=1264x842 components=8
+  1: x=0, y=0, w=1249, h=827
+  2: x=660, y=14, w=174, h=180
+  3: x=237, y=42, w=150, h=152
+  4: x=32, y=69, w=150, h=125
+  5: x=237, y=194, w=150, h=213
+  6: x=1026, y=596, w=212, h=226
+  7: x=633, y=605, w=380, h=222
+  8: x=7, y=806, w=1257, h=36
+
+[tear_lake_sheet_white_background.png] size=1314x1197 components=1
+  1: x=0, y=0, w=1314, h=1197
+
+[tear_lake_single_white_background.png] size=1254x1254 components=2
+  1: x=158, y=70, w=983, h=1020
+  2: x=480, y=594, w=47, h=64

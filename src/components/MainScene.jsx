@@ -12,6 +12,7 @@ export default function MainScene({
   pendingRecord,
   onOpenDiary,
   onThrowComplete,
+  onCancelPendingRecord,
   onSelectStar,
   onClearRecords
 }) {
@@ -59,10 +60,6 @@ export default function MainScene({
 
           <div className="scene-visuals" aria-label="情绪角色画面">
             <CharacterActor emotion={currentEmotion} />
-            <div className="companion-placeholders" aria-hidden="true">
-              <span>{config.fox.replace("/assets/", "assets/")}</span>
-              <span>{config.rose.replace("/assets/", "assets/")}</span>
-            </div>
           </div>
 
           <div className="stage-actions" aria-label="主操作">
@@ -83,7 +80,12 @@ export default function MainScene({
           </div>
         </div>
 
-        <PaperNote record={pendingRecord} records={records} onThrowComplete={onThrowComplete} />
+        <PaperNote
+          record={pendingRecord}
+          records={records}
+          onThrowComplete={onThrowComplete}
+          onCancel={onCancelPendingRecord}
+        />
       </section>
     </main>
   );

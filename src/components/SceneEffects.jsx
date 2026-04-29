@@ -5,15 +5,13 @@ export default function SceneEffects({ emotion }) {
 
   return (
     <div className="effects-layer" aria-hidden="true">
-      {effects.includes("rain") ? <span className="effect-label">assets/effects/rain_drop.png</span> : null}
-      {effects.includes("glow") ? <span className="effect-label">assets/effects/glow_particle.png</span> : null}
       {effects.includes("rain")
-        ? Array.from({ length: 18 }).map((_, index) => (
+        ? Array.from({ length: 32 }).map((_, index) => (
             <span className="rain-drop" key={`rain-${index}`} style={{ "--i": index }} />
           ))
         : null}
       {effects.includes("glow")
-        ? Array.from({ length: 14 }).map((_, index) => (
+        ? Array.from({ length: 24 }).map((_, index) => (
             <span className="glow-dot" key={`glow-${index}`} style={{ "--i": index }} />
           ))
         : null}
