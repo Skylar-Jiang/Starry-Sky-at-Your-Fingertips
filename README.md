@@ -1,8 +1,13 @@
-# 指尖星空 第一阶段 Demo
+# 指尖星空 Demo
 
-这是一个 React + Vite 的第一阶段可运行演示版本。当前目标是跑通“记录情绪 -> 折成纸团 -> 投向星空 -> 生成星星 -> 点击回看”的完整闭环。
+一个基于 React + Vite 的情绪记录交互 Demo。第三阶段版本已经支持记录情绪、折纸投掷、生成星星、观测筛选、情绪星座、环境白噪音、恢复小互动和星星管理。
 
-## 运行方式
+## 如何运行
+
+环境要求：
+
+- Node.js 20 或更高版本
+- npm
 
 ```bash
 npm install
@@ -16,91 +21,41 @@ npm test
 npm run build
 ```
 
-## 当前完成内容
+## 当前功能
 
-- 技术 A 数据闭环：创建完整 `record`、保存 localStorage、刷新后恢复。
-- 技术 B 演示流：信纸展示、纸团折叠、投掷动画、星星落点。
-- 星星回看：点击星星打开详情，显示原文、情绪、时间和反馈。
-- 情绪场景：背景统一使用 `sky-finger (3).zip` 中的星空底图，开心/难过通过星星、角色和特效区分。
-- 场景特效：开心使用光点漂浮，难过使用代码雨效；雨不烘焙在背景里。
-- 新 zip 的 UI 效果已融合到现有闭环：新版背景、透明信纸、纸团、星星和投掷/特效动画。
+- 情绪记录：支持开心、平静、委屈、生气、非常难过、焦虑六类情绪。
+- 投掷闭环：记录会生成信纸，折成纸团后投向星空，并写入星星位置。
+- 观测星空：支持情绪筛选、日期筛选、统计、日期分组、星座连线和星星回看。
+- 六情绪视觉：委屈、生气、焦虑已有独立角色图，六类情绪都有星座装饰资产。
+- 环境面板：支持雨声、篝火、海浪、摇篮曲四种 Web Audio 白噪音和音量控制。
+- 恢复互动：投掷完成后出现可点击的雨滴、火星、泡泡、光点等轻量反馈。
+- 星星详情：展示情绪、日期、星座名、原始文字和反馈，并支持收藏与软删除。
+- 本地持久化：记录保存到 `localStorage`，刷新后可恢复。
 
-## 目录说明
+## 实验功能
+
+手势实验入口用于演示第三阶段方向：默认关闭摄像头，失败时不影响键鼠主流程。第一版以安全入口和模拟事件为主，不把摄像头识别作为主操作依赖。
+
+## 资产说明
+
+新增项目图片保存在 `public/assets/`，由 Codex 按统一风格生成并用于本 Demo：原创星球少年、守夜同伴、温柔星空、低饱和暖光、透明背景素材。详细记录见 `docs/stage-3-asset-prompts.md`。
+
+## 主要结构
 
 ```text
 src/
-  App.jsx                         全局状态与主流程
-  components/                     页面、弹窗、纸团、星星、特效组件
-  config/emotionConfig.js         情绪标签、颜色、素材路径、反馈文案
-  utils/                          record、storage、时间、星星落点工具
-  __tests__/                      第一阶段闭环测试
+  App.jsx                         全局记录、持久化、收藏和软删除
+  components/                     主场景、观测、环境、互动、弹窗
+  config/                         情绪、星座、音频、恢复互动配置
+  hooks/                          Web Audio 和手势实验入口
+  utils/                          记录、筛选、分组、落点、存储工具
+  __tests__/                      工具函数和交互流程测试
 
 public/assets/
-  background/                     运行中的场景背景
-  character/                      运行中的小王子透明角色图
+  background/                     情绪背景
+  character/                      情绪角色
+  companions/                     狐狸和玫瑰
+  constellations/                 情绪星座装饰
+  environment/                    环境预设图
   objects/                        信纸、纸团、星星
-  ui/                             新增按钮/弹窗原图，暂未直接叠加使用
-  needs-manual-cutout/            有白底或整张图集，需手动抠图后再接入
-  needs-manual-review/            背景/图集烘焙了不适合直接叠加的内容
 ```
-
-## A/B 接口约定
-
-`App.jsx` 把待投掷记录传给纸团流程：
-
-```jsx
-<PaperNote
-  record={pendingRecord}
-  records={records}
-  onThrowComplete={handleThrowComplete}
-/>
-```
-
-纸团投掷完成后必须回传：
-
-```js
-onThrowComplete({
-  recordId,
-  star: { id, x, y }
-});
-```
-
-点击星星时调用：
-
-```js
-onSelectStar(record);
-```
-
-技术 B 不直接写 localStorage，不直接修改 `records`；保存和回写统一由 `App.jsx` 处理。
-
-## record 数据结构
-
-新建记录会保留后续阶段字段：
-
-```js
-{
-  id,
-  text,
-  emotion,
-  createdAt,
-  star,
-  title,
-  aiSuggestedEmotion,
-  aiFeedback,
-  favorite,
-  deleted,
-  audioUrl,
-  imageUrl,
-  diaryBookId,
-  gestureCreated
-}
-```
-
-新建时 `star` 为 `null`，投掷完成后回写 `{ id, x, y }`。
-
-## 素材处理记录
-
-- 已接入：`sky-finger (3).zip` 中的背景底图，作为 `bg_calm.png`、`bg_happy.png`、`bg_sad.png` 统一运行背景；`paper_flat.png`、`paper_ball.png`、`star_calm.png`、`star_happy.png`、`star_sad.png`、小王子三态透明角色图。
-- 未直接接入：狐狸、玫瑰、泪湖座图集等没有真实透明背景，已放入 `public/assets/needs-manual-cutout/`。
-- 未直接接入：整张纸团流程图集等会干扰程序特效或不是单体透明素材，已放入 `public/assets/needs-manual-review/`。
-- `public/assets/ui/` 中的新按钮和弹窗图保留为 UI 原图；当前页面继续使用可响应的按钮组件，避免图片文字和真实按钮文字重复。

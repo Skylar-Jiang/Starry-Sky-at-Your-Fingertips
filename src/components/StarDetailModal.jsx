@@ -1,8 +1,11 @@
-import { X } from "lucide-react";
+import { Heart, Trash2, X } from "lucide-react";
+import { getEmotionConstellationConfigs } from "../utils/constellationGroups";
 import { getEmotionLabel } from "../config/emotionConfig";
 
-export default function StarDetailModal({ record, onClose }) {
+export default function StarDetailModal({ record, onClose, onToggleFavorite, onDelete }) {
   if (!record) return null;
+  const constellation = getEmotionConstellationConfigs().find((item) => item.emotion === record.emotion);
+  const recordDate = record.createdAt?.slice(0, 10) || "未知日期";
 
   return (
     <div className="modal-backdrop">
@@ -23,6 +26,14 @@ export default function StarDetailModal({ record, onClose }) {
             <dd>{getEmotionLabel(record.emotion)}</dd>
           </div>
           <div>
+            <dt>星座</dt>
+            <dd>{constellation?.label || "散星"}</dd>
+          </div>
+          <div>
+            <dt>日期</dt>
+            <dd>{recordDate}</dd>
+          </div>
+          <div>
             <dt>时间</dt>
             <dd>{record.createdAt}</dd>
           </div>
@@ -30,6 +41,22 @@ export default function StarDetailModal({ record, onClose }) {
 
         <p className="detail-text">{record.text}</p>
         <p className="detail-feedback">{record.aiFeedback}</p>
+        {record.audioUrl ? <button className="secondary-button detail-audio-button">播放录音</button> : null}
+        <div className="detail-actions">
+          <button
+            className={record.favorite ? "secondary-button is-favorite" : "secondary-button"}
+            type="button"
+            onClick={() => onToggleFavorite(record.id)}
+            aria-label={record.favorite ? "取消收藏" : "收藏星星"}
+          >
+            <Heart size={17} />
+            {record.favorite ? "已收藏" : "收藏"}
+          </button>
+          <button className="secondary-button danger-button" type="button" onClick={() => onDelete(record.id)} aria-label="删除星星">
+            <Trash2 size={17} />
+            删除
+          </button>
+        </div>
       </section>
     </div>
   );

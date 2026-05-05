@@ -13,7 +13,7 @@ export function createEmotionRecord({ text, emotion }) {
     star: null,
     title: "",
     aiSuggestedEmotion: "",
-    aiFeedback: "这颗星星已经替你收下了今天的心情。",
+    aiFeedback: emotionConfig[safeEmotion].feedbackText,
     favorite: false,
     deleted: false,
     audioUrl: "",

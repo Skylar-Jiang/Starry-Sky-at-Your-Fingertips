@@ -11,6 +11,7 @@ export default function App() {
   const [isDiaryOpen, setIsDiaryOpen] = useState(false);
   const [pendingRecord, setPendingRecord] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
 
   useEffect(() => {
     const savedRecords = loadRecords();
@@ -25,6 +26,7 @@ export default function App() {
   );
 
   function handleOpenDiary() {
+    setRecentCompletedEmotion("");
     setIsDiaryOpen(true);
   }
 
@@ -58,6 +60,7 @@ export default function App() {
     saveRecords(nextRecords);
     setPendingRecord(null);
     setCurrentEmotion(targetRecord.emotion);
+    setRecentCompletedEmotion(targetRecord.emotion);
   }
 
   function handleCancelPendingRecord(recordId) {
@@ -75,12 +78,32 @@ export default function App() {
     setSelectedRecord(null);
   }
 
+  function handleToggleFavorite(recordId) {
+    const nextRecords = records.map((record) =>
+      record.id === recordId ? { ...record, favorite: !record.favorite } : record
+    );
+    const nextSelectedRecord = nextRecords.find((record) => record.id === recordId) || null;
+    setRecords(nextRecords);
+    saveRecords(nextRecords);
+    setSelectedRecord(nextSelectedRecord);
+  }
+
+  function handleDeleteRecord(recordId) {
+    const nextRecords = records.map((record) =>
+      record.id === recordId ? { ...record, deleted: true } : record
+    );
+    setRecords(nextRecords);
+    saveRecords(nextRecords);
+    setSelectedRecord(null);
+  }
+
   function handleClearRecords() {
     clearRecords();
     setRecords([]);
     setPendingRecord(null);
     setSelectedRecord(null);
     setCurrentEmotion("calm");
+    setRecentCompletedEmotion("");
   }
 
   return (
@@ -90,6 +113,7 @@ export default function App() {
         starredRecords={starredRecords}
         currentEmotion={currentEmotion}
         pendingRecord={pendingRecord}
+        recentCompletedEmotion={recentCompletedEmotion}
         onOpenDiary={handleOpenDiary}
         onThrowComplete={handleThrowComplete}
         onCancelPendingRecord={handleCancelPendingRecord}
@@ -99,7 +123,12 @@ export default function App() {
 
       <DiaryModal isOpen={isDiaryOpen} onClose={handleCloseDiary} onSubmit={handleCreateRecord} />
 
-      <StarDetailModal record={selectedRecord} onClose={handleCloseStarDetail} />
+      <StarDetailModal
+        record={selectedRecord}
+        onClose={handleCloseStarDetail}
+        onToggleFavorite={handleToggleFavorite}
+        onDelete={handleDeleteRecord}
+      />
     </>
   );
 }

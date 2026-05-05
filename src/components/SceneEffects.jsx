@@ -15,6 +15,22 @@ export default function SceneEffects({ emotion }) {
             <span className="glow-dot" key={`glow-${index}`} style={{ "--i": index }} />
           ))
         : null}
+      {effects.includes("softGlow")
+        ? Array.from({ length: 12 }).map((_, index) => (
+            <span className="soft-glow-dot" key={`soft-glow-${index}`} style={{ "--i": index }} />
+          ))
+        : null}
+      {effects.includes("spark")
+        ? Array.from({ length: 18 }).map((_, index) => (
+            <span className="spark-particle" key={`spark-${index}`} style={{ "--i": index }} />
+          ))
+        : null}
+      {effects.includes("dust")
+        ? Array.from({ length: 18 }).map((_, index) => (
+            <span className="dust-bubble" key={`dust-${index}`} style={{ "--i": index }} />
+          ))
+        : null}
+      {effects.includes("tearLakeHint") ? <span className="tear-lake-hint" /> : null}
     </div>
   );
 }

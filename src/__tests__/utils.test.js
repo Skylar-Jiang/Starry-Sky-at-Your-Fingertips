@@ -4,6 +4,14 @@ import { getCurrentTimeText } from "../utils/time";
 import { createEmotionRecord } from "../utils/record";
 import { createStarPlacement } from "../utils/starPlacement";
 import { loadRecords, saveRecords, clearRecords } from "../utils/storage";
+import { emotionConfig, emotionOptionKeys } from "../config/emotionConfig";
+import { constellationConfig } from "../config/constellationConfig";
+import {
+  filterRecordsByDateRange,
+  filterRecordsByEmotion,
+  groupRecordsByDate
+} from "../utils/recordFilters";
+import { buildEmotionConstellationGroups, emotionHasConstellation } from "../utils/constellationGroups";
 
 describe("技术 A 工具函数", () => {
   afterEach(() => {
@@ -34,7 +42,7 @@ describe("技术 A 工具函数", () => {
       star: null,
       title: "",
       aiSuggestedEmotion: "",
-      aiFeedback: "这颗星星已经替你收下了今天的心情。",
+      aiFeedback: "这颗星星已经替你收下了今天的心情，场景正在慢慢恢复平静。",
       favorite: false,
       deleted: false,
       audioUrl: "",
@@ -84,5 +92,68 @@ describe("技术 A 工具函数", () => {
       const distance = Math.hypot(star.x - record.star.x, star.y - record.star.y);
       expect(distance).toBeGreaterThanOrEqual(86);
     }
+  });
+
+  test("第三阶段六情绪拥有独立角色和星座资产配置", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const projectRoot = process.cwd();
+
+    const expectedCharacterByEmotion = {
+      happy: "/assets/character/traveler_happy.png",
+      calm: "/assets/character/traveler_calm.png",
+      wronged: "/assets/character/traveler_wronged.png",
+      angry: "/assets/character/traveler_angry.png",
+      verySad: "/assets/character/traveler_sad.png",
+      anxious: "/assets/character/traveler_anxious.png"
+    };
+
+    for (const emotion of emotionOptionKeys) {
+      const characterPath = emotionConfig[emotion].character.split("?")[0];
+      expect(characterPath).toBe(expectedCharacterByEmotion[emotion]);
+      expect(fs.existsSync(path.join(projectRoot, "public", characterPath))).toBe(true);
+    }
+
+    const constellations = Object.values(constellationConfig).filter((item) => item.emotion);
+    expect(constellations).toHaveLength(6);
+
+    for (const emotion of emotionOptionKeys) {
+      const constellation = constellations.find((item) => item.emotion === emotion);
+      expect(constellation).toMatchObject({
+        minimumStars: 3,
+        image: expect.stringMatching(/^\/assets\/constellations\/constellation_/)
+      });
+      expect(fs.existsSync(path.join(projectRoot, "public", constellation.image))).toBe(true);
+    }
+  });
+
+  test("第三阶段观测工具能按情绪和日期组织星星", () => {
+    const records = [
+      { id: "r1", emotion: "happy", createdAt: "2026-05-05 09:00:00", star: { x: 110, y: 120 } },
+      { id: "r2", emotion: "verySad", createdAt: "2026-05-05 10:00:00", star: { x: 170, y: 140 } },
+      { id: "r3", emotion: "verySad", createdAt: "2026-05-04 10:00:00", star: { x: 230, y: 170 } },
+      { id: "r4", emotion: "verySad", createdAt: "2026-04-28 10:00:00", star: { x: 290, y: 180 } }
+    ];
+
+    expect(filterRecordsByEmotion(records, "verySad").map((record) => record.id)).toEqual(["r2", "r3", "r4"]);
+    expect(groupRecordsByDate(records).map((group) => [group.date, group.records.length])).toEqual([
+      ["2026-05-05", 2],
+      ["2026-05-04", 1],
+      ["2026-04-28", 1]
+    ]);
+    expect(filterRecordsByDateRange(records, "today", new Date("2026-05-05T12:00:00")).map((record) => record.id)).toEqual([
+      "r1",
+      "r2"
+    ]);
+    expect(filterRecordsByDateRange(records, "last7", new Date("2026-05-05T12:00:00")).map((record) => record.id)).toEqual([
+      "r1",
+      "r2",
+      "r3"
+    ]);
+    expect(emotionHasConstellation(records, "verySad")).toBe(true);
+    expect(emotionHasConstellation(records, "happy")).toBe(false);
+    expect(buildEmotionConstellationGroups(records).find((group) => group.emotion === "verySad").linePoints).toBe(
+      "170,140 230,170 290,180"
+    );
   });
 });
