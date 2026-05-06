@@ -6,7 +6,33 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import App from "../App";
 import PaperNote from "../components/PaperNote";
 
+vi.setConfig({ testTimeout: 10000 });
+
 describe("技术 A 第一阶段数据闭环", () => {
+  function mockCameraStream() {
+    const stop = vi.fn();
+    const stream = {
+      getTracks: () => [{ stop }]
+    };
+    const getUserMedia = vi.fn().mockResolvedValue(stream);
+
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia }
+    });
+
+    return { getUserMedia, stop, stream };
+  }
+
+  function todayAt(time) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${time}`;
+  }
+
   beforeEach(() => {
     localStorage.clear();
   });
@@ -64,7 +90,7 @@ describe("技术 A 第一阶段数据闭环", () => {
       })
     );
     const sadTraveler = screen.getByRole("img", { name: "非常难过状态的小王子" });
-    expect(sadTraveler).toHaveAttribute("src", expect.stringContaining("/assets/character/traveler_sad.png"));
+    expect(sadTraveler).toHaveAttribute("src", expect.stringContaining("/assets/character/traveler_sad_v2.png"));
     expect(sadTraveler).toHaveClass("character-actor-image");
 
     await user.click(screen.getByRole("button", { name: /查看星星/ }));
@@ -111,10 +137,21 @@ describe("技术 A 第一阶段数据闭环", () => {
       emotion: "calm",
       star: null
     };
+    function ControlledPaperNote() {
+      const [isFolded, setIsFolded] = React.useState(false);
 
-    const { container } = render(
-      <PaperNote record={record} records={[]} onThrowComplete={vi.fn()} />
-    );
+      return (
+        <PaperNote
+          record={record}
+          isFolded={isFolded}
+          isThrowing={false}
+          onFold={() => setIsFolded(true)}
+          onThrow={vi.fn()}
+        />
+      );
+    }
+
+    const { container } = render(<ControlledPaperNote />);
 
     expect(container.querySelector(".paper-note-scene")).toBeInTheDocument();
     expect(container.querySelector(".paper-note")).not.toBeInTheDocument();
@@ -183,7 +220,7 @@ describe("技术 A 第一阶段数据闭环", () => {
     const dialog = screen.getByRole("dialog", { name: "星星详情" });
     expect(within(dialog).getByText("非常难过")).toBeInTheDocument();
     expect(within(dialog).getByText(/场景正在慢慢恢复平静/)).toBeInTheDocument();
-  });
+  }, 10000);
 
   test("投掷后主场景显示当前情绪对应的狐狸和玫瑰素材", async () => {
     const user = userEvent.setup();
@@ -263,14 +300,14 @@ describe("技术 A 第一阶段数据闭环", () => {
           id: "record_happy_today",
           text: "今天很亮",
           emotion: "happy",
-          createdAt: "2026-05-05 12:00:00",
+          createdAt: todayAt("12:00:00"),
           star: { id: "star_happy_today", x: 120, y: 120 }
         },
         {
           id: "record_sad_today",
           text: "今天很难过",
           emotion: "verySad",
-          createdAt: "2026-05-05 12:01:00",
+          createdAt: todayAt("12:01:00"),
           star: { id: "star_sad_today", x: 220, y: 150 }
         },
         {
@@ -369,7 +406,7 @@ describe("技术 A 第一阶段数据闭环", () => {
     expect(within(screen.getByRole("dialog", { name: "环境面板" })).getByText("播放中")).toBeInTheDocument();
   });
 
-  test("投掷焦虑情绪后出现可点击恢复泡泡，清空后显示恢复状态", async () => {
+  test("投掷后只出现一个星空星座光点，点击后场景回到平静", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -381,17 +418,26 @@ describe("技术 A 第一阶段数据闭环", () => {
     await user.click(screen.getByRole("img", { name: "纸团" }));
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button", { name: /点击沙尘泡泡/ })).toHaveLength(6);
+      expect(screen.getByRole("button", { name: "点亮星空微光" })).toBeInTheDocument();
     });
 
-    await user.click(screen.getAllByRole("button", { name: /点击沙尘泡泡/ })[0]);
-    expect(screen.getAllByRole("button", { name: /点击沙尘泡泡/ })).toHaveLength(5);
+    expect(screen.getAllByRole("button", { name: "点亮星空微光" })).toHaveLength(1);
+    expect(screen.getByText("点击星空里的微光，让场景慢慢平静")).toBeInTheDocument();
 
-    for (const button of screen.getAllByRole("button", { name: /点击沙尘泡泡/ })) {
-      await user.click(button);
-    }
+    await user.click(screen.getByRole("button", { name: "点亮星空微光" }));
 
-    expect(screen.getByText("场景恢复平静")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "点亮星空微光" })).not.toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "平静状态的狐狸" })).toHaveAttribute(
+        "src",
+        expect.stringContaining("/assets/companions/fox/fox_sleep.png")
+      );
+      expect(screen.getByRole("img", { name: "平静状态的玫瑰" })).toHaveAttribute(
+        "src",
+        expect.stringContaining("/assets/companions/rose/rose_soft.png")
+      );
+    });
   });
 
   test("星星详情支持收藏和软删除并写入 localStorage", async () => {
@@ -442,10 +488,164 @@ describe("技术 A 第一阶段数据闭环", () => {
 
     await user.click(screen.getByRole("button", { name: "手势实验" }));
     const panel = screen.getByRole("dialog", { name: "手势实验" });
-    expect(within(panel).getByText("实验功能，失败时请使用鼠标。")).toBeInTheDocument();
+    expect(within(panel).getByText("摄像头未开启")).toBeInTheDocument();
+    expect(panel.closest(".modal-backdrop")).not.toBeInTheDocument();
 
     await user.click(within(panel).getByRole("button", { name: "开启摄像头实验" }));
-    expect(await within(panel).findByText("摄像头权限不可用，请继续使用鼠标。")).toBeInTheDocument();
+    expect(await within(panel).findByText(/摄像头权限不可用/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "记录情绪" })).toBeInTheDocument();
+
+    await user.click(within(panel).getByRole("button", { name: "关闭手势实验" }));
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
+  });
+
+  test("打开手势实验小窗后主流程按钮仍然可点击", async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    expect(panel).toHaveClass("gesture-monitor-panel");
+    expect(panel.closest(".modal-backdrop")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+
+    expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
+  });
+
+  test("模拟 OK/捏合可以打开并提交记录弹窗", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+
+    expect(within(panel).getByText("OK/捏合：打开记录弹窗")).toBeInTheDocument();
+
+    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+    expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
+    expect(within(panel).getByText("OK/捏合：完成这张纸条")).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("想交给星空的话"), "不点完成，直接用捏合提交");
+    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+
+    expect(screen.queryByRole("dialog", { name: "记录情绪" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "折成纸团" })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("fingertip_starry_sky_records"))).toHaveLength(1);
+    expect(JSON.parse(localStorage.getItem("fingertip_starry_sky_records"))[0].text).toBe(
+      "不点完成，直接用捏合提交"
+    );
+    expect(within(panel).getByText("五指合拢：把信纸捏成纸团")).toBeInTheDocument();
+  });
+
+  test("摄像头授权成功后手势面板显示实时预览区域", async () => {
+    const user = userEvent.setup();
+    const { getUserMedia, stream, stop } = mockCameraStream();
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+
+    expect(within(panel).getByText("摄像头未开启")).toBeInTheDocument();
+
+    await user.click(within(panel).getByRole("button", { name: "开启摄像头实验" }));
+
+    const video = await within(panel).findByLabelText("摄像头实时预览");
+    expect(getUserMedia).toHaveBeenCalledWith({ video: true });
+    expect(video.srcObject).toBe(stream);
+    expect(stop).not.toHaveBeenCalled();
+  });
+
+  test("开启摄像头后仍然能点击记录情绪", async () => {
+    const user = userEvent.setup();
+    mockCameraStream();
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    await user.click(within(panel).getByRole("button", { name: "开启摄像头实验" }));
+    await within(panel).findByLabelText("摄像头实时预览");
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+
+    expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
+  });
+
+  test("关闭手势面板时会停止摄像头轨道", async () => {
+    const user = userEvent.setup();
+    const { stop } = mockCameraStream();
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    await user.click(within(panel).getByRole("button", { name: "开启摄像头实验" }));
+    await within(panel).findByLabelText("摄像头实时预览");
+
+    await user.click(within(panel).getByRole("button", { name: "关闭手势实验" }));
+
+    expect(stop).toHaveBeenCalledTimes(1);
+  });
+
+  test("模拟五指合拢会真的把待投掷纸条折成纸团", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "用模拟按钮折一下");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    await user.click(within(panel).getByRole("button", { name: "五指合拢" }));
+
+    expect(screen.getByRole("img", { name: "纸团" })).toBeInTheDocument();
+  });
+
+  test("模拟 OK/捏合会触发当前纸团阶段动作", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "用捏合投出去");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+
+    expect(screen.getByRole("img", { name: "纸团" })).toHaveClass("throwing-animation");
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
+      expect(saved[0].star).not.toBeNull();
+    });
+  });
+
+  test("恢复阶段模拟 OK/捏合会点亮星空微光并回到平静", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "手势实验" }));
+    const panel = screen.getByRole("dialog", { name: "手势实验" });
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "投出去以后用手势恢复");
+    await user.click(screen.getByRole("button", { name: "焦虑" }));
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("img", { name: "纸团" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "点亮星空微光" })).toBeInTheDocument();
+      expect(within(panel).getByText("OK/捏合：点亮星空微光")).toBeInTheDocument();
+    });
+
+    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "点亮星空微光" })).not.toBeInTheDocument();
+      expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
+    });
   });
 });

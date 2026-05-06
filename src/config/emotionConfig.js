@@ -42,7 +42,7 @@ export const emotionConfig = {
   verySad: {
     label: "非常难过",
     background: "/assets/background/bg_sad.png",
-    character: "/assets/character/traveler_sad.png?v=cutout4",
+    character: "/assets/character/traveler_sad_v2.png?v=cutout5",
     star: "/assets/objects/star_sad.png",
     starColor: "#7fa7ff",
     accentColor: "#9ec5ff",
@@ -62,7 +62,7 @@ export const emotionConfig = {
   sad: {
     label: "难过",
     background: "/assets/background/bg_sad.png",
-    character: "/assets/character/traveler_sad.png?v=cutout4",
+    character: "/assets/character/traveler_sad_v2.png?v=cutout5",
     star: "/assets/objects/star_sad.png",
     starColor: "#8fb7ff",
     accentColor: "#9ec5ff",

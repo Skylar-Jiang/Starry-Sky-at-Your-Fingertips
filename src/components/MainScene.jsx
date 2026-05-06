@@ -1,5 +1,5 @@
 import { BookOpen, Hand, Sparkles, Telescope, Trash2, WandSparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { emotionConfig } from "../config/emotionConfig";
 import CharacterActor from "./CharacterActor";
 import CompanionLayer from "./CompanionLayer";
@@ -8,20 +8,25 @@ import EnvironmentPanel from "./EnvironmentPanel";
 import GestureExperimentPanel from "./GestureExperimentPanel";
 import ObservationPanel from "./ObservationPanel";
 import PaperNote from "./PaperNote";
-import RecoveryInteractionLayer from "./RecoveryInteractionLayer";
+import RecoveryConstellationCue from "./RecoveryConstellationCue";
 import SceneEffects from "./SceneEffects";
 import StarLayer from "./StarLayer";
 import { filterRecordsByDateRange, filterRecordsByEmotion } from "../utils/recordFilters";
+import { createStarPlacement } from "../utils/starPlacement";
 import { useAmbientAudio } from "../hooks/useAmbientAudio";
 
 export default function MainScene({
   records,
   starredRecords,
   currentEmotion,
+  flowPhase,
   pendingRecord,
   recentCompletedEmotion,
   onOpenDiary,
+  onSubmitDiary,
+  onFlowPhaseChange,
   onThrowComplete,
+  onRecoveryComplete,
   onCancelPendingRecord,
   onSelectStar,
   onClearRecords
@@ -29,6 +34,8 @@ export default function MainScene({
   const [isObservingSky, setIsObservingSky] = useState(false);
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
   const [isGestureOpen, setIsGestureOpen] = useState(false);
+  const [isPendingRecordFolded, setIsPendingRecordFolded] = useState(false);
+  const [isPendingRecordThrowing, setIsPendingRecordThrowing] = useState(false);
   const [emotionFilter, setEmotionFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
   const ambientAudio = useAmbientAudio();
@@ -36,6 +43,66 @@ export default function MainScene({
   const visibleStarredRecords = isObservingSky
     ? filterRecordsByDateRange(filterRecordsByEmotion(starredRecords, emotionFilter), dateFilter)
     : starredRecords;
+
+  useEffect(() => {
+    setIsPendingRecordFolded(false);
+    setIsPendingRecordThrowing(false);
+  }, [pendingRecord?.id]);
+
+  function handleFoldPendingRecord() {
+    if (!pendingRecord || isPendingRecordThrowing) return;
+    setIsPendingRecordFolded(true);
+    onFlowPhaseChange("paperFolded");
+  }
+
+  function handleThrowPendingRecord() {
+    if (!pendingRecord || !isPendingRecordFolded || isPendingRecordThrowing) return;
+
+    setIsPendingRecordThrowing(true);
+    onFlowPhaseChange("throwing");
+
+    window.setTimeout(() => {
+      onThrowComplete({
+        recordId: pendingRecord.id,
+        star: createStarPlacement({
+          viewportWidth: typeof window === "undefined" ? 1200 : window.innerWidth,
+          viewportHeight: typeof window === "undefined" ? 800 : window.innerHeight,
+          existingStars: records
+        })
+      });
+      setIsPendingRecordFolded(false);
+      setIsPendingRecordThrowing(false);
+    }, 800);
+  }
+
+  function simulatePinch() {
+    if (flowPhase === "idle" || flowPhase === "calm") {
+      onOpenDiary();
+      return;
+    }
+
+    if (flowPhase === "writing") {
+      onSubmitDiary();
+      return;
+    }
+
+    if (flowPhase === "paperReady") {
+      return;
+    }
+
+    if (flowPhase === "paperFolded") {
+      handleThrowPendingRecord();
+      return;
+    }
+
+    if (flowPhase === "recoveryPrompt") {
+      onRecoveryComplete();
+    }
+  }
+
+  function simulateFold() {
+    handleFoldPendingRecord();
+  }
 
   return (
     <main className={`main-scene emotion-${currentEmotion}`}>
@@ -71,6 +138,11 @@ export default function MainScene({
         </div>
 
         <div className="sky-region">
+          <RecoveryConstellationCue
+            emotion={recentCompletedEmotion}
+            active={flowPhase === "recoveryPrompt"}
+            onComplete={onRecoveryComplete}
+          />
           {isObservingSky ? (
             <ObservationPanel
               totalCount={starredRecords.length}
@@ -98,10 +170,6 @@ export default function MainScene({
           <div className="scene-visuals" aria-label="情绪角色画面">
             <CharacterActor emotion={currentEmotion} />
             <CompanionLayer emotion={currentEmotion} />
-            <RecoveryInteractionLayer
-              emotion={currentEmotion}
-              active={!pendingRecord && recentCompletedEmotion === currentEmotion}
-            />
           </div>
 
           <div className="stage-actions" aria-label="主操作">
@@ -134,8 +202,10 @@ export default function MainScene({
 
         <PaperNote
           record={pendingRecord}
-          records={records}
-          onThrowComplete={onThrowComplete}
+          isFolded={isPendingRecordFolded}
+          isThrowing={isPendingRecordThrowing}
+          onFold={handleFoldPendingRecord}
+          onThrow={handleThrowPendingRecord}
           onCancel={onCancelPendingRecord}
         />
       </section>
@@ -147,7 +217,14 @@ export default function MainScene({
           onClose={() => setIsEnvironmentOpen(false)}
         />
       ) : null}
-      {isGestureOpen ? <GestureExperimentPanel onClose={() => setIsGestureOpen(false)} /> : null}
+      {isGestureOpen ? (
+        <GestureExperimentPanel
+          onClose={() => setIsGestureOpen(false)}
+          flowPhase={flowPhase}
+          onSimulatePinch={simulatePinch}
+          onSimulateFold={simulateFold}
+        />
+      ) : null}
     </main>
   );
 }

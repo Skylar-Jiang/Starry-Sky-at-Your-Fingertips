@@ -9,6 +9,10 @@ export default function App() {
   const [records, setRecords] = useState([]);
   const [currentEmotion, setCurrentEmotion] = useState("calm");
   const [isDiaryOpen, setIsDiaryOpen] = useState(false);
+  const [flowPhase, setFlowPhase] = useState("idle");
+  const [diaryText, setDiaryText] = useState("");
+  const [diaryEmotion, setDiaryEmotion] = useState("calm");
+  const [diaryError, setDiaryError] = useState("");
   const [pendingRecord, setPendingRecord] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
@@ -27,21 +31,39 @@ export default function App() {
 
   function handleOpenDiary() {
     setRecentCompletedEmotion("");
+    setDiaryError("");
     setIsDiaryOpen(true);
+    setFlowPhase("writing");
   }
 
   function handleCloseDiary() {
     setIsDiaryOpen(false);
+    setDiaryText("");
+    setDiaryEmotion("calm");
+    setDiaryError("");
+    if (!pendingRecord) setFlowPhase(currentEmotion === "calm" ? "calm" : "idle");
   }
 
-  function handleCreateRecord(data) {
-    const record = createEmotionRecord(data);
+  function handleCreateRecord(data = { text: diaryText, emotion: diaryEmotion }) {
+    const trimmedText = (data.text || "").trim();
+
+    if (!trimmedText) {
+      setDiaryError("请先写下一点想交给星空的话。");
+      return false;
+    }
+
+    const record = createEmotionRecord({ text: trimmedText, emotion: data.emotion });
     const nextRecords = [...records, record];
 
     setRecords(nextRecords);
     saveRecords(nextRecords);
     setPendingRecord(record);
     setIsDiaryOpen(false);
+    setDiaryText("");
+    setDiaryEmotion("calm");
+    setDiaryError("");
+    setFlowPhase("paperReady");
+    return true;
   }
 
   function handleThrowComplete(payload) {
@@ -61,6 +83,7 @@ export default function App() {
     setPendingRecord(null);
     setCurrentEmotion(targetRecord.emotion);
     setRecentCompletedEmotion(targetRecord.emotion);
+    setFlowPhase("recoveryPrompt");
   }
 
   function handleCancelPendingRecord(recordId) {
@@ -68,6 +91,13 @@ export default function App() {
     setRecords(nextRecords);
     saveRecords(nextRecords);
     setPendingRecord(null);
+    setFlowPhase("idle");
+  }
+
+  function handleRecoveryComplete() {
+    setCurrentEmotion("calm");
+    setRecentCompletedEmotion("");
+    setFlowPhase("calm");
   }
 
   function handleSelectStar(record) {
@@ -104,6 +134,11 @@ export default function App() {
     setSelectedRecord(null);
     setCurrentEmotion("calm");
     setRecentCompletedEmotion("");
+    setIsDiaryOpen(false);
+    setDiaryText("");
+    setDiaryEmotion("calm");
+    setDiaryError("");
+    setFlowPhase("idle");
   }
 
   return (
@@ -112,16 +147,32 @@ export default function App() {
         records={records}
         starredRecords={starredRecords}
         currentEmotion={currentEmotion}
+        flowPhase={flowPhase}
         pendingRecord={pendingRecord}
         recentCompletedEmotion={recentCompletedEmotion}
         onOpenDiary={handleOpenDiary}
+        onSubmitDiary={handleCreateRecord}
+        onFlowPhaseChange={setFlowPhase}
         onThrowComplete={handleThrowComplete}
+        onRecoveryComplete={handleRecoveryComplete}
         onCancelPendingRecord={handleCancelPendingRecord}
         onSelectStar={handleSelectStar}
         onClearRecords={handleClearRecords}
       />
 
-      <DiaryModal isOpen={isDiaryOpen} onClose={handleCloseDiary} onSubmit={handleCreateRecord} />
+      <DiaryModal
+        isOpen={isDiaryOpen}
+        text={diaryText}
+        emotion={diaryEmotion}
+        error={diaryError}
+        onTextChange={(value) => {
+          setDiaryText(value);
+          if (diaryError) setDiaryError("");
+        }}
+        onEmotionChange={setDiaryEmotion}
+        onClose={handleCloseDiary}
+        onSubmit={handleCreateRecord}
+      />
 
       <StarDetailModal
         record={selectedRecord}

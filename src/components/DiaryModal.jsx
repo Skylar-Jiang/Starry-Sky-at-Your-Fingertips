@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import EmotionSelector from "./EmotionSelector";
 
-export default function DiaryModal({ isOpen, onClose, onSubmit }) {
-  const [text, setText] = useState("");
-  const [emotion, setEmotion] = useState("calm");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (isOpen) setError("");
-  }, [isOpen]);
-
+export default function DiaryModal({
+  isOpen,
+  text,
+  emotion,
+  error,
+  onTextChange,
+  onEmotionChange,
+  onClose,
+  onSubmit
+}) {
   if (!isOpen) return null;
 
   function handleSubmit(event) {
     event.preventDefault();
-
-    if (!text.trim()) {
-      setError("请先写下一点想交给星空的话。");
-      return;
-    }
-
-    onSubmit({ text: text.trim(), emotion });
-    setText("");
-    setEmotion("calm");
-    setError("");
+    onSubmit();
   }
 
   return (
@@ -40,7 +31,7 @@ export default function DiaryModal({ isOpen, onClose, onSubmit }) {
               id="diary-text"
               className="paper-textarea"
               value={text}
-              onChange={(event) => setText(event.target.value)}
+              onChange={(event) => onTextChange(event.target.value)}
               placeholder="今天有点累，但我想把它交给星空"
               rows={8}
               autoFocus
@@ -57,7 +48,7 @@ export default function DiaryModal({ isOpen, onClose, onSubmit }) {
             </div>
           </div>
 
-          <EmotionSelector value={emotion} onChange={setEmotion} />
+          <EmotionSelector value={emotion} onChange={onEmotionChange} />
 
           {error ? <p className="form-error paper-form-error">{error}</p> : null}
         </div>

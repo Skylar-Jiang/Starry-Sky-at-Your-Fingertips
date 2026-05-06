@@ -12,6 +12,8 @@ import {
   groupRecordsByDate
 } from "../utils/recordFilters";
 import { buildEmotionConstellationGroups, emotionHasConstellation } from "../utils/constellationGroups";
+import { createGestureActionDispatcher } from "../utils/gestureActions";
+import { detectFiveFingerClose, detectPinch } from "../hooks/useHandGestureRecognition";
 
 describe("技术 A 工具函数", () => {
   afterEach(() => {
@@ -104,7 +106,7 @@ describe("技术 A 工具函数", () => {
       calm: "/assets/character/traveler_calm.png",
       wronged: "/assets/character/traveler_wronged.png",
       angry: "/assets/character/traveler_angry.png",
-      verySad: "/assets/character/traveler_sad.png",
+      verySad: "/assets/character/traveler_sad_v2.png",
       anxious: "/assets/character/traveler_anxious.png"
     };
 
@@ -155,5 +157,42 @@ describe("技术 A 工具函数", () => {
     expect(buildEmotionConstellationGroups(records).find((group) => group.emotion === "verySad").linePoints).toBe(
       "170,140 230,170 290,180"
     );
+  });
+
+  test("gesture dispatcher shares the same handlers for camera and simulation input", () => {
+    const onPinch = vi.fn();
+    const onFold = vi.fn();
+    const dispatchGesture = createGestureActionDispatcher({ onPinch, onFold });
+
+    dispatchGesture("pinch");
+    dispatchGesture("fiveFingerClose");
+    dispatchGesture("unknown");
+
+    expect(onPinch).toHaveBeenCalledTimes(1);
+    expect(onFold).toHaveBeenCalledTimes(1);
+  });
+
+  test("gesture geometry detects pinch and five finger close", () => {
+    const openHand = Array.from({ length: 21 }, () => ({ x: 0.5, y: 0.5, z: 0 }));
+    openHand[0] = { x: 0.5, y: 0.7, z: 0 };
+    openHand[4] = { x: 0.25, y: 0.35, z: 0 };
+    openHand[8] = { x: 0.75, y: 0.25, z: 0 };
+    openHand[12] = { x: 0.6, y: 0.2, z: 0 };
+    openHand[16] = { x: 0.45, y: 0.25, z: 0 };
+    openHand[20] = { x: 0.3, y: 0.32, z: 0 };
+
+    const pinchedHand = openHand.map((point) => ({ ...point }));
+    pinchedHand[4] = { x: 0.51, y: 0.48, z: 0 };
+    pinchedHand[8] = { x: 0.53, y: 0.5, z: 0 };
+
+    const closedHand = openHand.map((point) => ({ ...point }));
+    for (const index of [4, 8, 12, 16, 20]) {
+      closedHand[index] = { x: 0.5, y: 0.56, z: 0 };
+    }
+
+    expect(detectPinch(pinchedHand)).toBe(true);
+    expect(detectPinch(openHand)).toBe(false);
+    expect(detectFiveFingerClose(closedHand)).toBe(true);
+    expect(detectFiveFingerClose(openHand)).toBe(false);
   });
 });
