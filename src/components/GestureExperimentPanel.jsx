@@ -11,7 +11,7 @@ const gestureHints = {
   paperReady: "五指合拢：把信纸捏成纸团",
   paperFolded: "OK/捏合：投向星空",
   throwing: "纸团正在飞向星空",
-  recoveryPrompt: "OK/捏合：点亮星空微光"
+  recoveryPrompt: "OK/捏合：安放当前星星"
 };
 
 export default function GestureExperimentPanel({ onClose, flowPhase = "idle", onSimulatePinch, onSimulateFold }) {

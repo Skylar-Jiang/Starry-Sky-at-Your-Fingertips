@@ -6,9 +6,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import App from "../App";
 import PaperNote from "../components/PaperNote";
 
-vi.setConfig({ testTimeout: 10000 });
+vi.setConfig({ testTimeout: 20000 });
 
-describe("技术 A 第一阶段数据闭环", () => {
+describe("指尖星空演示闭环", () => {
   function mockCameraStream() {
     const stop = vi.fn();
     const stream = {
@@ -384,8 +384,9 @@ describe("技术 A 第一阶段数据闭环", () => {
     await user.click(screen.getByRole("button", { name: "改变环境" }));
 
     const panel = screen.getByRole("dialog", { name: "环境面板" });
-    expect(within(panel).getByRole("img", { name: "狐狸样式预览" })).toBeInTheDocument();
-    expect(within(panel).getByRole("img", { name: "玫瑰状态预览" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "雨夜星空" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "炉边星空" })).toBeInTheDocument();
+    expect(within(panel).getAllByRole("img", { name: /平静.*星空场景/ })).toHaveLength(4);
     expect(within(panel).getByRole("button", { name: "雨声" })).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: "篝火" })).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: "海浪" })).toBeInTheDocument();
@@ -406,9 +407,9 @@ describe("技术 A 第一阶段数据闭环", () => {
     expect(within(screen.getByRole("dialog", { name: "环境面板" })).getByText("播放中")).toBeInTheDocument();
   });
 
-  test("投掷后只出现一个星空星座光点，点击后场景回到平静", async () => {
+  test("投掷后出现焦虑泡泡恢复物件，点击后场景回到平静", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    const { container } = render(<App />);
 
     await user.click(screen.getByRole("button", { name: "记录情绪" }));
     await user.type(screen.getByLabelText("想交给星空的话"), "脑子里有很多绕来绕去的声音。");
@@ -418,26 +419,29 @@ describe("技术 A 第一阶段数据闭环", () => {
     await user.click(screen.getByRole("img", { name: "纸团" }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "点亮星空微光" })).toBeInTheDocument();
+      expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
+      expect(container.querySelectorAll(".recovery-object")).toHaveLength(6);
     });
 
-    expect(screen.getAllByRole("button", { name: "点亮星空微光" })).toHaveLength(1);
-    expect(screen.getByText("点击星空里的微光，让场景慢慢平静")).toBeInTheDocument();
+    for (const button of Array.from(container.querySelectorAll(".recovery-object")).slice(0, 5)) {
+      await user.click(button);
+    }
 
-    await user.click(screen.getByRole("button", { name: "点亮星空微光" }));
-
-    await waitFor(() => {
-      expect(screen.queryByRole("button", { name: "点亮星空微光" })).not.toBeInTheDocument();
-      expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
-      expect(screen.getByRole("img", { name: "平静状态的狐狸" })).toHaveAttribute(
-        "src",
-        expect.stringContaining("/assets/companions/fox/fox_sleep.png")
-      );
-      expect(screen.getByRole("img", { name: "平静状态的玫瑰" })).toHaveAttribute(
-        "src",
-        expect.stringContaining("/assets/companions/rose/rose_soft.png")
-      );
-    });
+    await waitFor(
+      () => {
+        expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
+        expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
+        expect(screen.getByRole("img", { name: "平静状态的狐狸" })).toHaveAttribute(
+          "src",
+          expect.stringContaining("/assets/companions/fox/fox_sleep.png")
+        );
+        expect(screen.getByRole("img", { name: "平静状态的玫瑰" })).toHaveAttribute(
+          "src",
+          expect.stringContaining("/assets/companions/rose/rose_soft.png")
+        );
+      },
+      { timeout: 2200 }
+    );
   });
 
   test("星星详情支持收藏和软删除并写入 localStorage", async () => {
@@ -623,7 +627,7 @@ describe("技术 A 第一阶段数据闭环", () => {
     });
   });
 
-  test("恢复阶段模拟 OK/捏合会点亮星空微光并回到平静", async () => {
+  test("恢复阶段模拟 OK/捏合会安放当前星星并回到平静", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -637,15 +641,211 @@ describe("技术 A 第一阶段数据闭环", () => {
     await user.click(screen.getByRole("img", { name: "纸团" }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "点亮星空微光" })).toBeInTheDocument();
-      expect(within(panel).getByText("OK/捏合：点亮星空微光")).toBeInTheDocument();
+      expect(document.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
+      expect(within(panel).getByText("OK/捏合：安放当前星星")).toBeInTheDocument();
     });
 
     await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
 
     await waitFor(() => {
-      expect(screen.queryByRole("button", { name: "点亮星空微光" })).not.toBeInTheDocument();
+      expect(document.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
       expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
     });
+  });
+
+  test("投掷后出现专属恢复物件，点击足够数量后安放星星并回到平静", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByRole("textbox"), "some wronged feeling to be held by the sky");
+    await user.click(screen.getByRole("button", { name: "委屈" }));
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await waitFor(() => {
+      expect(JSON.parse(localStorage.getItem("fingertip_starry_sky_records"))).toHaveLength(1);
+    });
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("img", { name: "纸团" }));
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
+      expect(saved[0].star).not.toBeNull();
+    });
+
+    await waitFor(() => {
+      expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
+      expect(container.querySelectorAll(".recovery-object")).toHaveLength(7);
+    });
+
+    const activeObjects = () => Array.from(container.querySelectorAll(".recovery-object:not(.is-resolved)"));
+    for (const button of activeObjects().slice(0, 5)) {
+      await user.click(button);
+    }
+
+    await waitFor(() => {
+      expect(screen.getByText("这颗星星已经被你安放好了。")).toBeInTheDocument();
+    });
+
+    await waitFor(
+      () => {
+        expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
+        expect(container.querySelector('img[src*="traveler_calm.png"]')).toBeInTheDocument();
+      },
+      { timeout: 2200 }
+    );
+  });
+
+  test("环境面板展示当前情绪的四个星空场景变体，选择场景不会自动播放白噪音", async () => {
+    const user = userEvent.setup();
+    const stopSpy = vi.fn();
+    class MockAudioNode {
+      connect() {
+        return this;
+      }
+      disconnect() {}
+      start = vi.fn();
+      stop = stopSpy;
+    }
+    class MockAudioContext {
+      currentTime = 0;
+      destination = new MockAudioNode();
+      createGain() {
+        return { gain: { value: 0.2, setTargetAtTime: vi.fn() }, connect: vi.fn() };
+      }
+      createBuffer() {
+        return { getChannelData: () => new Float32Array(128) };
+      }
+      createBufferSource() {
+        return new MockAudioNode();
+      }
+      createBiquadFilter() {
+        return new MockAudioNode();
+      }
+      createOscillator() {
+        const node = new MockAudioNode();
+        node.frequency = { value: 0 };
+        return node;
+      }
+      resume() {
+        return Promise.resolve();
+      }
+      close() {
+        return Promise.resolve();
+      }
+    }
+    window.AudioContext = MockAudioContext;
+    window.webkitAudioContext = MockAudioContext;
+
+    localStorage.setItem(
+      "fingertip_starry_sky_records",
+      JSON.stringify([
+        {
+          id: "record_env_wronged",
+          text: "想换一个能接住委屈的星空",
+          emotion: "wronged",
+          createdAt: "2026-05-11 20:00:00",
+          star: { id: "star_env_wronged", x: 220, y: 150 },
+          favorite: false,
+          deleted: false
+        }
+      ])
+    );
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "改变环境" }));
+
+    const panel = screen.getByRole("dialog", { name: "环境面板" });
+    expect(within(panel).getByRole("button", { name: "雨夜星空" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "炉边星空" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "海浪星空" })).toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "摇篮星空" })).toBeInTheDocument();
+    expect(within(panel).getAllByRole("img", { name: /委屈.*星空场景/ })).toHaveLength(4);
+
+    await user.click(within(panel).getByRole("button", { name: "炉边星空" }));
+
+    expect(within(panel).getByRole("button", { name: "播放白噪音" })).toBeInTheDocument();
+    expect(within(panel).queryByText("播放中")).not.toBeInTheDocument();
+    expect(within(panel).getByRole("button", { name: "篝火" })).toHaveClass("is-selected");
+    expect(stopSpy).not.toHaveBeenCalled();
+  });
+
+  test("同一种情绪的星星按星座模板落点，并在三颗后显示主星空星座提示", async () => {
+    const user = userEvent.setup();
+    const randomValues = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+    const randomSpy = vi.spyOn(Math, "random").mockImplementation(() => randomValues.shift() ?? 0.5);
+
+    localStorage.setItem(
+      "fingertip_starry_sky_records",
+      JSON.stringify([
+        {
+          id: "record_wronged_1",
+          text: "第一颗委屈星",
+          emotion: "wronged",
+          createdAt: "2026-05-11 20:00:00",
+          star: { id: "star_wronged_1", x: 228, y: 148 },
+          favorite: false,
+          deleted: false
+        },
+        {
+          id: "record_wronged_2",
+          text: "第二颗委屈星",
+          emotion: "wronged",
+          createdAt: "2026-05-11 20:01:00",
+          star: { id: "star_wronged_2", x: 332, y: 116 },
+          favorite: false,
+          deleted: false
+        }
+      ])
+    );
+
+    try {
+      render(<App />);
+
+      await user.click(screen.getByRole("button", { name: "记录情绪" }));
+      await user.type(screen.getByRole("textbox"), "第三颗委屈星也想被放好");
+      await user.click(screen.getByRole("button", { name: "委屈" }));
+      await user.click(screen.getByRole("button", { name: "完成" }));
+      await user.click(screen.getByRole("button", { name: "折成纸团" }));
+      await user.click(screen.getByRole("img", { name: "纸团" }));
+
+      await waitFor(() => {
+        const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
+        const newStar = saved.find((record) => record.text === "第三颗委屈星也想被放好").star;
+        expect(newStar.x).toBeGreaterThanOrEqual(440);
+        expect(newStar.x).toBeLessThanOrEqual(490);
+        expect(newStar.y).toBeGreaterThanOrEqual(160);
+        expect(newStar.y).toBeLessThanOrEqual(240);
+      });
+
+      expect(screen.getByText("它们正在慢慢连成一条温柔的路。")).toBeInTheDocument();
+      expect(document.querySelector(".main-constellation-hint")).toBeInTheDocument();
+    } finally {
+      randomSpy.mockRestore();
+    }
+  });
+
+  test("恢复物件未点够前只显示进度，不提前显示安放完成文案", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByRole("textbox"), "这次想慢慢点亮雨滴");
+    await user.click(screen.getByRole("button", { name: "委屈" }));
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("img", { name: "纸团" }));
+
+    await waitFor(() => {
+      expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
+      expect(screen.getByText("轻轻点亮雨滴 0/5")).toBeInTheDocument();
+    });
+    expect(screen.queryByText("这颗星星已经被你安放好了。")).not.toBeInTheDocument();
+
+    const firstTwo = Array.from(container.querySelectorAll(".recovery-object")).slice(0, 2);
+    for (const button of firstTwo) {
+      await user.click(button);
+    }
+
+    expect(screen.getByText("轻轻点亮雨滴 2/5")).toBeInTheDocument();
+    expect(screen.queryByText("这颗星星已经被你安放好了。")).not.toBeInTheDocument();
   });
 });

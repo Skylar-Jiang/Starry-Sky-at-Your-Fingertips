@@ -36,6 +36,59 @@ export const environmentAssetConfig = {
   lullaby: "/assets/environment/env_lullaby.png"
 };
 
+const sceneRoot = "/assets/environment/scenes";
+
+const baseEnvironmentScenes = [
+  {
+    key: "rain",
+    label: "雨夜星空",
+    audioPreset: "rain",
+    audioLabel: "雨声",
+    description: "一片被雨声轻轻接住的星空"
+  },
+  {
+    key: "campfire",
+    label: "炉边星空",
+    audioPreset: "campfire",
+    audioLabel: "篝火",
+    description: "带一点暖光，但仍然安静的星空"
+  },
+  {
+    key: "waves",
+    label: "海浪星空",
+    audioPreset: "waves",
+    audioLabel: "海浪",
+    description: "像潮汐一样慢慢松开的星空"
+  },
+  {
+    key: "lullaby",
+    label: "摇篮星空",
+    audioPreset: "lullaby",
+    audioLabel: "摇篮曲",
+    description: "适合把心事放低一点的星空"
+  }
+];
+
+const environmentSceneEmotions = ["wronged", "angry", "anxious", "calm"];
+
+export const environmentSceneConfig = environmentSceneEmotions.reduce((scenes, emotion) => {
+  scenes[emotion] = baseEnvironmentScenes.map((scene) => ({
+    ...scene,
+    id: `${emotion}_${scene.key}`,
+    image: `${sceneRoot}/${emotion}_${scene.key}.png`
+  }));
+  return scenes;
+}, {});
+
+export function getEnvironmentScenes(emotion) {
+  return environmentSceneConfig[emotion] || environmentSceneConfig.calm;
+}
+
+export function getDefaultEnvironmentSceneKey(emotion, recommendedPreset = "rain") {
+  const scenes = getEnvironmentScenes(emotion);
+  return scenes.find((scene) => scene.audioPreset === recommendedPreset)?.key || scenes[0].key;
+}
+
 export function getSceneAssets(emotion) {
   return sceneAssetConfig[emotion] || sceneAssetConfig.calm;
 }

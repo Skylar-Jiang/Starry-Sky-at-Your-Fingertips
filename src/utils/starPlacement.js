@@ -1,4 +1,5 @@
 import { createStarId } from "./id";
+import { getConstellationTemplate } from "../config/constellationTemplates";
 
 const SAFE_AREA = {
   marginX: 120,
@@ -22,10 +23,28 @@ function hasEnoughDistance(candidate, points, minDistance) {
   return points.every((point) => Math.hypot(candidate.x - point.x, candidate.y - point.y) >= minDistance);
 }
 
+function createTemplateCandidate({ emotion, minX, maxX, minY, maxY, existingStars, random }) {
+  if (!emotion) return null;
+  const template = getConstellationTemplate(emotion);
+  const sameEmotionCount = existingStars.filter((record) => record.emotion === emotion && record.star).length;
+  const templatePoint = template[sameEmotionCount % template.length];
+  if (!templatePoint) return null;
+
+  const jitterX = Math.round((random() - 0.5) * 18);
+  const jitterY = Math.round((random() - 0.5) * 14);
+
+  return {
+    id: createStarId(),
+    x: clamp(Math.round(minX + templatePoint.x * (maxX - minX) + jitterX), minX, maxX),
+    y: clamp(Math.round(minY + templatePoint.y * (maxY - minY) + jitterY), minY, maxY)
+  };
+}
+
 export function createStarPlacement({
   viewportWidth,
   viewportHeight,
   existingStars = [],
+  emotion,
   random = Math.random
 } = {}) {
   const width = Number.isFinite(viewportWidth) ? viewportWidth : 1200;
@@ -35,6 +54,9 @@ export function createStarPlacement({
   const minY = SAFE_AREA.top;
   const maxY = Math.max(minY, Math.round(height * SAFE_AREA.bottomRatio));
   const points = getExistingStarPoints(existingStars);
+  const templateCandidate = createTemplateCandidate({ emotion, minX, maxX, minY, maxY, existingStars, random });
+
+  if (templateCandidate) return templateCandidate;
 
   let bestCandidate = null;
   let bestDistance = -1;

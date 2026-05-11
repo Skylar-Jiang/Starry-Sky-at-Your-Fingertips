@@ -1,10 +1,10 @@
 import { X } from "lucide-react";
 import { getEmotionLabel } from "../config/emotionConfig";
-import { getSceneAssets } from "../config/sceneAssetConfig";
+import { getEnvironmentScenes } from "../config/sceneAssetConfig";
 import EnvironmentAudioControls from "./EnvironmentAudioControls";
 
-export default function EnvironmentPanel({ emotion, audio, onClose }) {
-  const assets = getSceneAssets(emotion);
+export default function EnvironmentPanel({ emotion, audio, selectedSceneKey, onSelectScene, onClose }) {
+  const sceneOptions = getEnvironmentScenes(emotion);
   const label = getEmotionLabel(emotion);
 
   return (
@@ -20,15 +20,20 @@ export default function EnvironmentPanel({ emotion, audio, onClose }) {
           </button>
         </div>
 
-        <div className="environment-preview-grid">
-          <figure>
-            <img src={assets.fox} alt="狐狸样式预览" />
-            <figcaption>{label}狐狸</figcaption>
-          </figure>
-          <figure>
-            <img src={assets.rose} alt="玫瑰状态预览" />
-            <figcaption>{label}玫瑰</figcaption>
-          </figure>
+        <div className="environment-preview-grid" aria-label={`${label}星空场景变体`}>
+          {sceneOptions.map((scene) => (
+            <button
+              key={scene.key}
+              className={selectedSceneKey === scene.key ? "environment-scene-card is-selected" : "environment-scene-card"}
+              type="button"
+              onClick={() => onSelectScene(scene)}
+              aria-label={scene.label}
+            >
+              <img src={scene.image} alt={`${label}${scene.label}场景`} />
+              <span>{scene.label}</span>
+              <small>{scene.description}</small>
+            </button>
+          ))}
         </div>
 
         <EnvironmentAudioControls emotion={emotion} audio={audio} />

@@ -1,25 +1,57 @@
 # 第三阶段资产生成记录
 
-所有新增 PNG 均保存到 `public/assets/`，用于项目内演示。风格统一为原创星球少年、温柔星空、柔和 3D 水彩感、透明背景素材；不包含文字、水印或“小王子”字样。
+所有项目内素材保存到 `public/assets/`。本轮重点是恢复纸张原始版本、补齐恢复互动透明素材，并新增星空主题环境场景变体。
 
-## 角色图
+## 恢复互动素材
 
-- `public/assets/character/traveler_wronged.png`：原创星球少年，抱膝低头但不绝望，蓝金围巾、星尘披风，柔和故事书 3D 水彩风格，透明背景。
-- `public/assets/character/traveler_angry.png`：原创星球少年，轻微叉腰和小火星反馈，偏可爱，不做攻击性表情，透明背景。
-- `public/assets/character/traveler_anxious.png`：原创星球少年，双手收在胸前，周围有浅色星尘旋涡，避免夸张恐慌，透明背景。
+目录：`public/assets/recovery/`
 
-## 星座装饰图
+- `raindrop_wronged.png`：委屈雨滴，使用 imagegen 生成后做透明处理。
+- `raindrop_light_dust.png`：雨滴消散后的星尘。
+- `ember_angry.png`：生气火星。
+- `ember_cooling.png`：火星冷却后的柔光灰烬。
+- `anxiety_bubble.png`：焦虑泡泡。
+- `bubble_stardust_pop.png`：泡泡破裂后的星尘。
+- `lake_light_very_sad.png`：非常难过的泪湖微光。
+- `happy_glow_seed.png`：开心光点。
+- `calm_soft_mote.png`：平静柔光粒子。
 
-- `public/assets/constellations/constellation_bloom.png`：开心情绪，柔亮绽放星点和虚线连线。
-- `public/assets/constellations/constellation_quiet_orbit.png`：平静情绪，静环轨道与浅蓝星点。
-- `public/assets/constellations/constellation_drizzle_arc.png`：委屈情绪，细雨弧线与柔蓝星点。
-- `public/assets/constellations/constellation_ember_ring.png`：生气情绪，暖色微烬环与柔和连线。
-- `public/assets/constellations/constellation_tear_lake.png`：非常难过情绪，泪湖弧面与浅蓝光点。
-- `public/assets/constellations/constellation_dust_spiral.png`：焦虑情绪，星尘旋线与低饱和青绿色星点。
+## 星空环境场景
 
-## 环境预设图
+目录：`public/assets/environment/scenes/`
 
-- `public/assets/environment/env_rain.png`：雨声预设，柔云和细雨。
-- `public/assets/environment/env_campfire.png`：篝火预设，暖光火焰和木柴。
-- `public/assets/environment/env_waves.png`：海浪预设，浅青波线和星光。
-- `public/assets/environment/env_lullaby.png`：摇篮曲预设，月亮与音符。
+每个核心情绪提供四种星空主题变体：
+
+- `wronged_rain.png`
+- `wronged_campfire.png`
+- `wronged_waves.png`
+- `wronged_lullaby.png`
+- `angry_rain.png`
+- `angry_campfire.png`
+- `angry_waves.png`
+- `angry_lullaby.png`
+- `anxious_rain.png`
+- `anxious_campfire.png`
+- `anxious_waves.png`
+- `anxious_lullaby.png`
+- `calm_rain.png`
+- `calm_campfire.png`
+- `calm_waves.png`
+- `calm_lullaby.png`
+
+生成策略：
+
+- 使用 imagegen 生成四张 2x2 母版，分别对应委屈、生气、焦虑、平静。
+- 每张母版保持星空为主场景，人物、狐狸、玫瑰和光色做轻量变化。
+- 裁切为 640x360 缩略图，避开母版分割线。
+- 用 vision 检查确认：无文字、无水印、主体清晰、星空主题一致、缩略图可读。
+
+## 保留与回退
+
+- `public/assets/objects/paper_flat.png`：已恢复为项目原始信纸素材。
+- `public/assets/objects/paper_ball.png`：已恢复为项目原始纸团素材。
+- `public/assets/character/traveler_wronged.png`
+- `public/assets/character/traveler_angry.png`
+- `public/assets/character/traveler_anxious.png`
+
+三张情绪角色图保留统一后的柔和 3D 童话风版本。背景图 `bg_calm.png`、`bg_happy.png`、`bg_sad.png` 保留压缩后的版本。

@@ -8,12 +8,14 @@ import EnvironmentPanel from "./EnvironmentPanel";
 import GestureExperimentPanel from "./GestureExperimentPanel";
 import ObservationPanel from "./ObservationPanel";
 import PaperNote from "./PaperNote";
-import RecoveryConstellationCue from "./RecoveryConstellationCue";
+import RecoveryInteractionLayer from "./RecoveryInteractionLayer";
 import SceneEffects from "./SceneEffects";
 import StarLayer from "./StarLayer";
 import { filterRecordsByDateRange, filterRecordsByEmotion } from "../utils/recordFilters";
 import { createStarPlacement } from "../utils/starPlacement";
 import { useAmbientAudio } from "../hooks/useAmbientAudio";
+import { getRecommendedAudioPreset } from "../config/audioConfig";
+import { getDefaultEnvironmentSceneKey } from "../config/sceneAssetConfig";
 
 export default function MainScene({
   records,
@@ -22,6 +24,7 @@ export default function MainScene({
   flowPhase,
   pendingRecord,
   recentCompletedEmotion,
+  recentCompletedStar,
   onOpenDiary,
   onSubmitDiary,
   onFlowPhaseChange,
@@ -29,7 +32,8 @@ export default function MainScene({
   onRecoveryComplete,
   onCancelPendingRecord,
   onSelectStar,
-  onClearRecords
+  onClearRecords,
+  onInjectDemoData
 }) {
   const [isObservingSky, setIsObservingSky] = useState(false);
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
@@ -38,6 +42,9 @@ export default function MainScene({
   const [isPendingRecordThrowing, setIsPendingRecordThrowing] = useState(false);
   const [emotionFilter, setEmotionFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
+  const [selectedEnvironmentSceneKey, setSelectedEnvironmentSceneKey] = useState(() =>
+    getDefaultEnvironmentSceneKey(currentEmotion, getRecommendedAudioPreset(currentEmotion))
+  );
   const ambientAudio = useAmbientAudio();
   const config = emotionConfig[currentEmotion] || emotionConfig.calm;
   const visibleStarredRecords = isObservingSky
@@ -48,6 +55,10 @@ export default function MainScene({
     setIsPendingRecordFolded(false);
     setIsPendingRecordThrowing(false);
   }, [pendingRecord?.id]);
+
+  useEffect(() => {
+    setSelectedEnvironmentSceneKey(getDefaultEnvironmentSceneKey(currentEmotion, getRecommendedAudioPreset(currentEmotion)));
+  }, [currentEmotion]);
 
   function handleFoldPendingRecord() {
     if (!pendingRecord || isPendingRecordThrowing) return;
@@ -67,7 +78,8 @@ export default function MainScene({
         star: createStarPlacement({
           viewportWidth: typeof window === "undefined" ? 1200 : window.innerWidth,
           viewportHeight: typeof window === "undefined" ? 800 : window.innerHeight,
-          existingStars: records
+          existingStars: records,
+          emotion: pendingRecord.emotion
         })
       });
       setIsPendingRecordFolded(false);
@@ -104,8 +116,10 @@ export default function MainScene({
     handleFoldPendingRecord();
   }
 
+  const isRecoveryActive = flowPhase === "recoveryPrompt";
+
   return (
-    <main className={`main-scene emotion-${currentEmotion}`}>
+    <main className={`main-scene emotion-${currentEmotion} ${isRecoveryActive ? "is-recovery-active" : ""}`}>
       <img className="scene-background-image" src={config.background} alt="" aria-hidden="true" />
       <div className="scene-overlay" />
       <SceneEffects emotion={currentEmotion} />
@@ -120,6 +134,9 @@ export default function MainScene({
             <button className="icon-text-button" type="button" onClick={onClearRecords}>
               <Trash2 size={17} />
               清空测试数据
+            </button>
+            <button className="demo-seed-button" type="button" onClick={onInjectDemoData} aria-label="注入演示数据">
+              <span aria-hidden="true">•</span>
             </button>
             <button className="icon-text-button" type="button" onClick={() => setIsGestureOpen(true)} aria-label="手势实验">
               <Hand size={17} />
@@ -138,9 +155,10 @@ export default function MainScene({
         </div>
 
         <div className="sky-region">
-          <RecoveryConstellationCue
+          <RecoveryInteractionLayer
             emotion={recentCompletedEmotion}
-            active={flowPhase === "recoveryPrompt"}
+            active={isRecoveryActive}
+            targetStar={recentCompletedStar}
             onComplete={onRecoveryComplete}
           />
           {isObservingSky ? (
@@ -156,7 +174,10 @@ export default function MainScene({
           {isObservingSky ? (
             <ConstellationView records={visibleStarredRecords} onSelectStar={onSelectStar} />
           ) : (
-            <StarLayer records={starredRecords} onSelectStar={onSelectStar} />
+            <>
+              <StarLayer records={starredRecords} onSelectStar={onSelectStar} />
+              <MainConstellationHint records={starredRecords} />
+            </>
           )}
           <div className="constellation-hint">已保存 {records.length} 条记录</div>
         </div>
@@ -214,6 +235,11 @@ export default function MainScene({
         <EnvironmentPanel
           emotion={currentEmotion}
           audio={ambientAudio}
+          selectedSceneKey={selectedEnvironmentSceneKey}
+          onSelectScene={(scene) => {
+            setSelectedEnvironmentSceneKey(scene.key);
+            ambientAudio.setSelectedPreset(scene.audioPreset);
+          }}
           onClose={() => setIsEnvironmentOpen(false)}
         />
       ) : null}
@@ -226,5 +252,35 @@ export default function MainScene({
         />
       ) : null}
     </main>
+  );
+}
+
+function MainConstellationHint({ records }) {
+  const groups = Object.values(
+    records.reduce((acc, record) => {
+      if (!record.star) return acc;
+      const group = acc[record.emotion] || { emotion: record.emotion, records: [] };
+      group.records.push(record);
+      acc[record.emotion] = group;
+      return acc;
+    }, {})
+  );
+  const activeGroup = groups.find((group) => group.records.length >= 3);
+
+  if (!activeGroup) return null;
+
+  const points = activeGroup.records
+    .slice(0, 5)
+    .map((record) => `${record.star.x},${record.star.y}`)
+    .join(" ");
+  const strengthClass = activeGroup.records.length >= 4 ? "is-stronger" : "";
+
+  return (
+    <div className={`main-constellation-hint ${strengthClass}`} aria-label="星座提示">
+      <svg viewBox="0 0 1200 440" aria-hidden="true">
+        <polyline points={points} />
+      </svg>
+      <p>它们正在慢慢连成一条温柔的路。</p>
+    </div>
   );
 }
