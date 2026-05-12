@@ -60,3 +60,41 @@ visual-checks/chrome-profile/
 visual-checks/**/*.png
 visual-checks/**/*.webm
 visual-checks/**/*.log
+
+# Local dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+vite-*.log
+
+# Visual check browser cache / profiles
+visual-checks/chrome-profile*/
+visual-checks/**/Cache/
+visual-checks/**/Code Cache/
+visual-checks/**/GPUCache/
+
+# Visual check artifacts
+visual-checks/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+vite-*.log
+
+# Visual check artifacts / Chrome profiles
+visual-checks/chrome-profile*/
+visual-checks/**/Cache/
+visual-checks/**/Code Cache/
+visual-checks/**/GPUCache/
+
+# Visual check artifacts
+visual-checks/
