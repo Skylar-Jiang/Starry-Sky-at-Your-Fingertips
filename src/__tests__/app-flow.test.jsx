@@ -5,6 +5,9 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import App from "../App";
 import PaperNote from "../components/PaperNote";
+import { getEnvironmentComposition } from "../config/environmentCompositionConfig";
+import { getConstellationByKey } from "../config/presetConstellationConfig";
+import { projectConstellationNodes } from "../utils/constellationProjection";
 
 vi.setConfig({ testTimeout: 20000 });
 
@@ -89,9 +92,8 @@ describe("指尖星空演示闭环", () => {
         y: expect.any(Number)
       })
     );
-    const sadTraveler = screen.getByRole("img", { name: "非常难过状态的小王子" });
-    expect(sadTraveler).toHaveAttribute("src", expect.stringContaining("/assets/character/traveler_sad_v2.png"));
-    expect(sadTraveler).toHaveClass("character-actor-image");
+    const foreground = document.querySelector(".foreground-emotion-verySad .scene-emotion-group");
+    expect(foreground).toHaveAttribute("src", expect.stringContaining("/assets/scene-layers/emotion-groups/verySad_group.png"));
 
     await user.click(screen.getByRole("button", { name: /查看星星/ }));
     const dialog = screen.getByRole("dialog", { name: "星星详情" });
@@ -237,15 +239,15 @@ describe("指尖星空演示闭环", () => {
       const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
       expect(saved[0].star).not.toBeNull();
       expect(saved[0].emotion).toBe("wronged");
-      expect(screen.getByRole("img", { name: "委屈状态的狐狸" })).toHaveAttribute(
+      expect(document.querySelector(".foreground-emotion-wronged .scene-emotion-group")).toHaveAttribute(
         "src",
-        expect.stringContaining("/assets/companions/fox/fox_comfort.png")
+        expect.stringContaining("/assets/scene-layers/emotion-groups/wronged_group.png")
       );
     });
 
-    expect(screen.getByRole("img", { name: "委屈状态的玫瑰" })).toHaveAttribute(
+    expect(document.querySelector(".scene-foreground-platform")).toHaveAttribute(
       "src",
-      expect.stringContaining("/assets/companions/rose/rose_wilt.png")
+      expect.stringContaining("/assets/scene-layers/platforms/")
     );
   });
 
@@ -282,10 +284,8 @@ describe("指尖星空演示闭环", () => {
     await user.click(screen.getByRole("button", { name: "观测星空" }));
 
     expect(screen.getByRole("region", { name: "观测星空" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "泪湖座" })).toHaveAttribute(
-      "src",
-      "/assets/constellations/constellation_tear_lake.png"
-    );
+    expect(document.querySelector(".preset-constellation-layer")).toBeInTheDocument();
+    expect(document.querySelector(".preset-constellation-outline line")).toBeInTheDocument();
 
     await user.click(screen.getAllByRole("button", { name: /查看星星/ })[0]);
     expect(screen.getByRole("dialog", { name: "星星详情" })).toBeInTheDocument();
@@ -430,14 +430,9 @@ describe("指尖星空演示闭环", () => {
     await waitFor(
       () => {
         expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
-        expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
-        expect(screen.getByRole("img", { name: "平静状态的狐狸" })).toHaveAttribute(
+        expect(container.querySelector(".foreground-scene-lullaby .scene-emotion-group")).toHaveAttribute(
           "src",
-          expect.stringContaining("/assets/companions/fox/fox_sleep.png")
-        );
-        expect(screen.getByRole("img", { name: "平静状态的玫瑰" })).toHaveAttribute(
-          "src",
-          expect.stringContaining("/assets/companions/rose/rose_soft.png")
+          expect.stringContaining("/assets/scene-layers/emotion-groups/calm_group.png")
         );
       },
       { timeout: 2200 }
@@ -649,7 +644,7 @@ describe("指尖星空演示闭环", () => {
 
     await waitFor(() => {
       expect(document.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
-      expect(screen.getByRole("img", { name: "平静状态的小王子" })).toBeInTheDocument();
+      expect(document.querySelector(".foreground-scene-lullaby .scene-foreground-stage")).toBeInTheDocument();
     });
   });
 
@@ -688,7 +683,7 @@ describe("指尖星空演示闭环", () => {
     await waitFor(
       () => {
         expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
-        expect(container.querySelector('img[src*="traveler_calm.png"]')).toBeInTheDocument();
+        expect(container.querySelector('.scene-emotion-group[src*="calm_group.png"]')).toBeInTheDocument();
       },
       { timeout: 2200 }
     );
@@ -762,16 +757,62 @@ describe("指尖星空演示闭环", () => {
 
     await user.click(within(panel).getByRole("button", { name: "炉边星空" }));
 
-    expect(within(panel).getByRole("button", { name: "播放白噪音" })).toBeInTheDocument();
-    expect(within(panel).queryByText("播放中")).not.toBeInTheDocument();
-    expect(within(panel).getByRole("button", { name: "篝火" })).toHaveClass("is-selected");
+    expect(screen.queryByRole("dialog", { name: "环境面板" })).not.toBeInTheDocument();
     expect(stopSpy).not.toHaveBeenCalled();
+  });
+
+  test("选择环境后主星空立即切换 composition，并把星星层限制在天空区域", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    expect(container.querySelector(".main-scene")).toHaveAttribute("data-scene-key", "lullaby");
+    expect(container.querySelector(".environment-layer-base")).not.toBeInTheDocument();
+    expect(container.querySelector(".scene-environment-lullaby")).toBeInTheDocument();
+    expect(container.querySelector('.scene-foreground-platform[src*="lullaby_platform.png"]')).toBeInTheDocument();
+    expect(container.querySelector('.scene-emotion-group[src*="calm_group.png"]')).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "改变环境" }));
+    const panel = screen.getByRole("dialog", { name: "环境面板" });
+    await user.click(within(panel).getByRole("button", { name: "海浪星空" }));
+
+    expect(container.querySelector(".main-scene")).toHaveAttribute("data-scene-key", "waves");
+    expect(container.querySelector(".environment-layer-base")).not.toBeInTheDocument();
+    expect(container.querySelector(".scene-environment-waves")).toBeInTheDocument();
+    expect(container.querySelector('.scene-foreground-platform[src*="waves_platform.png"]')).toBeInTheDocument();
+    expect(container.querySelector('.scene-emotion-group[src*="calm_group.png"]')).toBeInTheDocument();
+    expect(container.querySelector(".star-layer")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "环境面板" })).not.toBeInTheDocument();
+  });
+
+  test("纸团投掷会生成朝向目标星座点的流星轨迹", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByRole("textbox"), "想看见纸团飞成一颗星");
+    await user.click(screen.getByRole("button", { name: "开心" }));
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("img", { name: "纸团" }));
+
+    const meteor = container.querySelector(".paper-meteor-trail");
+    expect(meteor).toBeInTheDocument();
+    expect(meteor.style.getPropertyValue("--meteor-target-x")).toMatch(/px$/);
+    expect(meteor.style.getPropertyValue("--meteor-target-y")).toMatch(/px$/);
   });
 
   test("同一种情绪的星星按星座模板落点，并在三颗后显示主星空星座提示", async () => {
     const user = userEvent.setup();
-    const randomValues = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
-    const randomSpy = vi.spyOn(Math, "random").mockImplementation(() => randomValues.shift() ?? 0.5);
+    const randomSpy = vi.spyOn(Math, "random").mockImplementation(() => 0.5);
+    window.history.pushState({}, "", "/?constellation=aries");
+    const projectedAriesNodes = Object.fromEntries(
+      projectConstellationNodes(
+        getConstellationByKey("aries"),
+        getEnvironmentComposition("wronged", "rain").skyBounds,
+        window.innerWidth,
+        window.innerHeight
+      ).map((node) => [node.id, node])
+    );
 
     localStorage.setItem(
       "fingertip_starry_sky_records",
@@ -781,7 +822,14 @@ describe("指尖星空演示闭环", () => {
           text: "第一颗委屈星",
           emotion: "wronged",
           createdAt: "2026-05-11 20:00:00",
-          star: { id: "star_wronged_1", x: 228, y: 148 },
+          star: {
+            id: "star_wronged_1",
+            x: projectedAriesNodes.a1.x,
+            y: projectedAriesNodes.a1.y,
+            constellationKey: "aries",
+            constellationNodeId: "a1",
+            constellationIndex: 0
+          },
           favorite: false,
           deleted: false
         },
@@ -790,7 +838,14 @@ describe("指尖星空演示闭环", () => {
           text: "第二颗委屈星",
           emotion: "wronged",
           createdAt: "2026-05-11 20:01:00",
-          star: { id: "star_wronged_2", x: 332, y: 116 },
+          star: {
+            id: "star_wronged_2",
+            x: projectedAriesNodes.a2.x,
+            y: projectedAriesNodes.a2.y,
+            constellationKey: "aries",
+            constellationNodeId: "a2",
+            constellationIndex: 1
+          },
           favorite: false,
           deleted: false
         }
@@ -810,16 +865,33 @@ describe("指尖星空演示闭环", () => {
       await waitFor(() => {
         const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
         const newStar = saved.find((record) => record.text === "第三颗委屈星也想被放好").star;
-        expect(newStar.x).toBeGreaterThanOrEqual(440);
-        expect(newStar.x).toBeLessThanOrEqual(490);
-        expect(newStar.y).toBeGreaterThanOrEqual(160);
-        expect(newStar.y).toBeLessThanOrEqual(240);
+        expect(newStar).toEqual(
+          expect.objectContaining({
+            x: projectedAriesNodes.a4.x,
+            y: projectedAriesNodes.a4.y,
+            constellationKey: "aries",
+            constellationNodeId: "a4",
+            constellationIndex: 3
+          })
+        );
       });
 
-      expect(screen.getByText("它们正在慢慢连成一条温柔的路。")).toBeInTheDocument();
-      expect(document.querySelector(".main-constellation-hint")).toBeInTheDocument();
+      expect(document.querySelector(".preset-constellation-layer p")).toHaveTextContent(/forming/);
+      expect(document.querySelector(".preset-constellation-layer")).toBeInTheDocument();
+      expect(document.querySelector(".preset-constellation-outline line")).toBeInTheDocument();
+      const outlineLines = Array.from(document.querySelectorAll(".preset-constellation-outline line"));
+      expect(
+        outlineLines.some(
+          (line) =>
+            Number(line.getAttribute("x2")) === projectedAriesNodes.a4.x &&
+            Number(line.getAttribute("y2")) === projectedAriesNodes.a4.y
+        )
+      ).toBe(true);
+      expect(document.querySelector(".preset-constellation-layer path")).not.toBeInTheDocument();
+      expect(document.querySelector(".preset-constellation-layer polyline")).not.toBeInTheDocument();
     } finally {
       randomSpy.mockRestore();
+      window.history.pushState({}, "", "/");
     }
   });
 
@@ -847,5 +919,46 @@ describe("指尖星空演示闭环", () => {
 
     expect(screen.getByText("轻轻点亮雨滴 2/5")).toBeInTheDocument();
     expect(screen.queryByText("这颗星星已经被你安放好了。")).not.toBeInTheDocument();
+  });
+
+  test("恢复物件点击后使用目标星坐标计算飞行偏移", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByRole("textbox"), "雨滴要飞回刚刚那颗星");
+    await user.click(screen.getByRole("button", { name: "委屈" }));
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "折成纸团" }));
+    await user.click(screen.getByRole("img", { name: "纸团" }));
+
+    await waitFor(() => {
+      expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
+    });
+
+    const firstObject = container.querySelector(".recovery-object");
+    await user.click(firstObject);
+
+    expect(firstObject.style.getPropertyValue("--resolve-x")).toMatch(/px$/);
+    expect(firstObject.style.getPropertyValue("--resolve-y")).toMatch(/px$/);
+  });
+  test("瑙傛祴鏄熺┖浣跨敤杞绘煍杩炵画璺緞鍜岀偣鐘跺井鍏夛紝涓嶅啀鐢ㄧ矖鎶樼嚎鎷兼帴", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(
+      "fingertip_starry_sky_records",
+      JSON.stringify([
+        { id: "r1", text: "one", emotion: "calm", createdAt: "2026-05-11 20:00:00", star: { id: "s1", x: 240, y: 130 } },
+        { id: "r2", text: "two", emotion: "calm", createdAt: "2026-05-11 20:01:00", star: { id: "s2", x: 360, y: 180 } },
+        { id: "r3", text: "three", emotion: "calm", createdAt: "2026-05-11 20:02:00", star: { id: "s3", x: 520, y: 150 } }
+      ])
+    );
+
+    const { container } = render(<App />);
+    await user.click(screen.getByRole("button", { name: "观测星空" }));
+
+    expect(document.querySelector(".preset-constellation-outline line")).toBeInTheDocument();
+    expect(document.querySelector(".preset-constellation-layer path")).not.toBeInTheDocument();
+    expect(document.querySelector(".preset-constellation-layer polyline")).not.toBeInTheDocument();
+    expect(container.querySelector(".preset-constellation-points")).toBeInTheDocument();
   });
 });

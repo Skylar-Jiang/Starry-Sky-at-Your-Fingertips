@@ -33,7 +33,7 @@ export default function RecoveryConstellationCue({ emotion, active, onComplete }
         style={{ "--cue-color": config.starColor, "--cue-accent": config.accentColor }}
       >
         <svg viewBox="0 0 96 96" aria-hidden="true" focusable="false">
-          <polyline points="18,42 38,24 58,48 78,30 66,70 58,48" />
+          <path d="M 18 42 Q 38 24 48 36 T 68 39 Q 78 30 72 50 T 58 48" />
           {starPoints.map((point, index) => (
             <circle key={index} cx={point.x} cy={point.y} r={index === 1 ? 5 : 4} />
           ))}

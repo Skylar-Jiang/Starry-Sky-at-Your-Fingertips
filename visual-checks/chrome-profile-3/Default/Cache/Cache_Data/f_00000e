@@ -1,0 +1,218 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/components/ObservationPanel.jsx");import __vite__cjsImport0_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=ce816eb7"; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+import { emotionOptions } from "/src/config/emotionConfig.js?t=1778554804302";
+import { getConstellationByKey, zodiacConstellations } from "/src/config/presetConstellationConfig.js?t=1778558165311";
+import { buildEmotionConstellationGroups } from "/src/utils/constellationGroups.js";
+import { groupRecordsByDate } from "/src/utils/recordFilters.js";
+const dateOptions = [
+  { value: "all", label: "全部" },
+  { value: "today", label: "今天" },
+  { value: "last7", label: "最近 7 天" }
+];
+export default function ObservationPanel({
+  totalCount,
+  records,
+  emotionFilter,
+  dateFilter,
+  activeConstellationKey = "aries",
+  isManualConstellation = false,
+  onEmotionFilterChange,
+  onDateFilterChange,
+  onSelectConstellation
+}) {
+  const activeConstellationCount = buildEmotionConstellationGroups(records).filter((group) => group.active).length;
+  const dateGroups = groupRecordsByDate(records);
+  const activeConstellation = getConstellationByKey(activeConstellationKey);
+  return /* @__PURE__ */ jsxDEV("aside", { className: "observation-panel", role: "region", "aria-label": "观测控制", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "observation-controls", children: [
+      /* @__PURE__ */ jsxDEV("label", { children: [
+        /* @__PURE__ */ jsxDEV("span", { children: "情绪筛选" }, void 0, false, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 31,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("select", { value: emotionFilter, onChange: (event) => onEmotionFilterChange(event.target.value), children: [
+          /* @__PURE__ */ jsxDEV("option", { value: "all", children: "全部" }, void 0, false, {
+            fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+            lineNumber: 33,
+            columnNumber: 13
+          }, this),
+          emotionOptions.map(
+            (option) => /* @__PURE__ */ jsxDEV("option", { value: option.key, children: option.label }, option.key, false, {
+              fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+              lineNumber: 35,
+              columnNumber: 13
+            }, this)
+          )
+        ] }, void 0, true, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 32,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 30,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("label", { children: [
+        /* @__PURE__ */ jsxDEV("span", { children: "日期筛选" }, void 0, false, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 43,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("select", { value: dateFilter, onChange: (event) => onDateFilterChange(event.target.value), children: dateOptions.map(
+          (option) => /* @__PURE__ */ jsxDEV("option", { value: option.value, children: option.label }, option.value, false, {
+            fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+            lineNumber: 46,
+            columnNumber: 13
+          }, this)
+        ) }, void 0, false, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 44,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 42,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("label", { children: [
+        /* @__PURE__ */ jsxDEV("span", { children: "下个星座" }, void 0, false, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 54,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(
+          "select",
+          {
+            value: activeConstellationKey,
+            onChange: (event) => onSelectConstellation?.(event.target.value),
+            "aria-label": "选择下个星座",
+            children: zodiacConstellations.map(
+              (constellation) => /* @__PURE__ */ jsxDEV("option", { value: constellation.key, children: constellation.label }, constellation.key, false, {
+                fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+                lineNumber: 61,
+                columnNumber: 13
+              }, this)
+            )
+          },
+          void 0,
+          false,
+          {
+            fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+            lineNumber: 55,
+            columnNumber: 11
+          },
+          this
+        )
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 53,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+      lineNumber: 29,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "observation-stats", "aria-label": "观测统计", children: [
+      /* @__PURE__ */ jsxDEV("span", { children: [
+        "总星星 ",
+        totalCount
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 70,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { children: [
+        "当前筛选 ",
+        records.length
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 71,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { children: [
+        "已形成星座 ",
+        activeConstellationCount
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 72,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { children: [
+        isManualConstellation ? "手选" : "随机",
+        "：",
+        activeConstellation.label
+      ] }, void 0, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 73,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+      lineNumber: 69,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "observation-list", "aria-label": "星星列表", children: dateGroups.length ? dateGroups.map(
+      (group) => /* @__PURE__ */ jsxDEV("div", { className: "observation-date-group", children: [
+        /* @__PURE__ */ jsxDEV("strong", { children: group.date }, void 0, false, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 82,
+          columnNumber: 15
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", { children: [
+          group.records.length,
+          " 颗星"
+        ] }, void 0, true, {
+          fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+          lineNumber: 83,
+          columnNumber: 15
+        }, this)
+      ] }, group.date, true, {
+        fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+        lineNumber: 81,
+        columnNumber: 9
+      }, this)
+    ) : /* @__PURE__ */ jsxDEV("p", { children: "当前筛选下还没有星星。" }, void 0, false, {
+      fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+      lineNumber: 87,
+      columnNumber: 9
+    }, this) }, void 0, false, {
+      fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+      lineNumber: 78,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "D:/ai-coding/src/components/ObservationPanel.jsx",
+    lineNumber: 28,
+    columnNumber: 5
+  }, this);
+}
+_c = ObservationPanel;
+var _c;
+$RefreshReg$(_c, "ObservationPanel");
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("D:/ai-coding/src/components/ObservationPanel.jsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("D:/ai-coding/src/components/ObservationPanel.jsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+function $RefreshReg$(type, id) {
+  return RefreshRuntime.register(type, "D:/ai-coding/src/components/ObservationPanel.jsx " + id);
+}
+function $RefreshSig$() {
+  return RefreshRuntime.createSignatureFunctionForTransform();
+}
+
+//# sourceMappingURL=data:application/json;base64,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QUFBd0I7QUFBQSxhQUFBQSxJQUFBIiwibmFtZXMiOlsiZW1vdGlvbk9wdGlvbnMiLCJnZXRDb25zdGVsbGF0aW9uQnlLZXkiLCJ6b2RpYWNDb25zdGVsbGF0aW9ucyIsImJ1aWxkRW1vdGlvbkNvbnN0ZWxsYXRpb25Hcm91cHMiLCJncm91cFJlY29yZHNCeURhdGUiLCJkYXRlT3B0aW9ucyIsInZhbHVlIiwibGFiZWwiLCJPYnNlcnZhdGlvblBhbmVsIiwidG90YWxDb3VudCIsInJlY29yZHMiLCJlbW90aW9uRmlsdGVyIiwiZGF0ZUZpbHRlciIsImFjdGl2ZUNvbnN0ZWxsYXRpb25LZXkiLCJpc01hbnVhbENvbnN0ZWxsYXRpb24iLCJvbkVtb3Rpb25GaWx0ZXJDaGFuZ2UiLCJvbkRhdGVGaWx0ZXJDaGFuZ2UiLCJvblNlbGVjdENvbnN0ZWxsYXRpb24iLCJhY3RpdmVDb25zdGVsbGF0aW9uQ291bnQiLCJmaWx0ZXIiLCJncm91cCIsImFjdGl2ZSIsImxlbmd0aCIsImRhdGVHcm91cHMiLCJhY3RpdmVDb25zdGVsbGF0aW9uIiwiZXZlbnQiLCJ0YXJnZXQiLCJtYXAiLCJvcHRpb24iLCJrZXkiLCJjb25zdGVsbGF0aW9uIiwiZGF0ZSIsIl9jIl0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VzIjpbIk9ic2VydmF0aW9uUGFuZWwuanN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGVtb3Rpb25PcHRpb25zIH0gZnJvbSBcIi4uL2NvbmZpZy9lbW90aW9uQ29uZmlnXCI7XG5pbXBvcnQgeyBnZXRDb25zdGVsbGF0aW9uQnlLZXksIHpvZGlhY0NvbnN0ZWxsYXRpb25zIH0gZnJvbSBcIi4uL2NvbmZpZy9wcmVzZXRDb25zdGVsbGF0aW9uQ29uZmlnXCI7XG5pbXBvcnQgeyBidWlsZEVtb3Rpb25Db25zdGVsbGF0aW9uR3JvdXBzIH0gZnJvbSBcIi4uL3V0aWxzL2NvbnN0ZWxsYXRpb25Hcm91cHNcIjtcbmltcG9ydCB7IGdyb3VwUmVjb3Jkc0J5RGF0ZSB9IGZyb20gXCIuLi91dGlscy9yZWNvcmRGaWx0ZXJzXCI7XG5cbmNvbnN0IGRhdGVPcHRpb25zID0gW1xuICB7IHZhbHVlOiBcImFsbFwiLCBsYWJlbDogXCLlhajpg6hcIiB9LFxuICB7IHZhbHVlOiBcInRvZGF5XCIsIGxhYmVsOiBcIuS7iuWkqVwiIH0sXG4gIHsgdmFsdWU6IFwibGFzdDdcIiwgbGFiZWw6IFwi5pyA6L+RIDcg5aSpXCIgfVxuXTtcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gT2JzZXJ2YXRpb25QYW5lbCh7XG4gIHRvdGFsQ291bnQsXG4gIHJlY29yZHMsXG4gIGVtb3Rpb25GaWx0ZXIsXG4gIGRhdGVGaWx0ZXIsXG4gIGFjdGl2ZUNvbnN0ZWxsYXRpb25LZXkgPSBcImFyaWVzXCIsXG4gIGlzTWFudWFsQ29uc3RlbGxhdGlvbiA9IGZhbHNlLFxuICBvbkVtb3Rpb25GaWx0ZXJDaGFuZ2UsXG4gIG9uRGF0ZUZpbHRlckNoYW5nZSxcbiAgb25TZWxlY3RDb25zdGVsbGF0aW9uXG59KSB7XG4gIGNvbnN0IGFjdGl2ZUNvbnN0ZWxsYXRpb25Db3VudCA9IGJ1aWxkRW1vdGlvbkNvbnN0ZWxsYXRpb25Hcm91cHMocmVjb3JkcykuZmlsdGVyKChncm91cCkgPT4gZ3JvdXAuYWN0aXZlKS5sZW5ndGg7XG4gIGNvbnN0IGRhdGVHcm91cHMgPSBncm91cFJlY29yZHNCeURhdGUocmVjb3Jkcyk7XG4gIGNvbnN0IGFjdGl2ZUNvbnN0ZWxsYXRpb24gPSBnZXRDb25zdGVsbGF0aW9uQnlLZXkoYWN0aXZlQ29uc3RlbGxhdGlvbktleSk7XG5cbiAgcmV0dXJuIChcbiAgICA8YXNpZGUgY2xhc3NOYW1lPVwib2JzZXJ2YXRpb24tcGFuZWxcIiByb2xlPVwicmVnaW9uXCIgYXJpYS1sYWJlbD1cIuingua1i+aOp+WItlwiPlxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJvYnNlcnZhdGlvbi1jb250cm9sc1wiPlxuICAgICAgICA8bGFiZWw+XG4gICAgICAgICAgPHNwYW4+5oOF57uq562b6YCJPC9zcGFuPlxuICAgICAgICAgIDxzZWxlY3QgdmFsdWU9e2Vtb3Rpb25GaWx0ZXJ9IG9uQ2hhbmdlPXsoZXZlbnQpID0+IG9uRW1vdGlvbkZpbHRlckNoYW5nZShldmVudC50YXJnZXQudmFsdWUpfT5cbiAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9XCJhbGxcIj7lhajpg6g8L29wdGlvbj5cbiAgICAgICAgICAgIHtlbW90aW9uT3B0aW9ucy5tYXAoKG9wdGlvbikgPT4gKFxuICAgICAgICAgICAgICA8b3B0aW9uIGtleT17b3B0aW9uLmtleX0gdmFsdWU9e29wdGlvbi5rZXl9PlxuICAgICAgICAgICAgICAgIHtvcHRpb24ubGFiZWx9XG4gICAgICAgICAgICAgIDwvb3B0aW9uPlxuICAgICAgICAgICAgKSl9XG4gICAgICAgICAgPC9zZWxlY3Q+XG4gICAgICAgIDwvbGFiZWw+XG5cbiAgICAgICAgPGxhYmVsPlxuICAgICAgICAgIDxzcGFuPuaXpeacn+etm+mAiTwvc3Bhbj5cbiAgICAgICAgICA8c2VsZWN0IHZhbHVlPXtkYXRlRmlsdGVyfSBvbkNoYW5nZT17KGV2ZW50KSA9PiBvbkRhdGVGaWx0ZXJDaGFuZ2UoZXZlbnQudGFyZ2V0LnZhbHVlKX0+XG4gICAgICAgICAgICB7ZGF0ZU9wdGlvbnMubWFwKChvcHRpb24pID0+IChcbiAgICAgICAgICAgICAgPG9wdGlvbiBrZXk9e29wdGlvbi52YWx1ZX0gdmFsdWU9e29wdGlvbi52YWx1ZX0+XG4gICAgICAgICAgICAgICAge29wdGlvbi5sYWJlbH1cbiAgICAgICAgICAgICAgPC9vcHRpb24+XG4gICAgICAgICAgICApKX1cbiAgICAgICAgICA8L3NlbGVjdD5cbiAgICAgICAgPC9sYWJlbD5cblxuICAgICAgICA8bGFiZWw+XG4gICAgICAgICAgPHNwYW4+5LiL5Liq5pif5bqnPC9zcGFuPlxuICAgICAgICAgIDxzZWxlY3RcbiAgICAgICAgICAgIHZhbHVlPXthY3RpdmVDb25zdGVsbGF0aW9uS2V5fVxuICAgICAgICAgICAgb25DaGFuZ2U9eyhldmVudCkgPT4gb25TZWxlY3RDb25zdGVsbGF0aW9uPy4oZXZlbnQudGFyZ2V0LnZhbHVlKX1cbiAgICAgICAgICAgIGFyaWEtbGFiZWw9XCLpgInmi6nkuIvkuKrmmJ/luqdcIlxuICAgICAgICAgID5cbiAgICAgICAgICAgIHt6b2RpYWNDb25zdGVsbGF0aW9ucy5tYXAoKGNvbnN0ZWxsYXRpb24pID0+IChcbiAgICAgICAgICAgICAgPG9wdGlvbiBrZXk9e2NvbnN0ZWxsYXRpb24ua2V5fSB2YWx1ZT17Y29uc3RlbGxhdGlvbi5rZXl9PlxuICAgICAgICAgICAgICAgIHtjb25zdGVsbGF0aW9uLmxhYmVsfVxuICAgICAgICAgICAgICA8L29wdGlvbj5cbiAgICAgICAgICAgICkpfVxuICAgICAgICAgIDwvc2VsZWN0PlxuICAgICAgICA8L2xhYmVsPlxuICAgICAgPC9kaXY+XG5cbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwib2JzZXJ2YXRpb24tc3RhdHNcIiBhcmlhLWxhYmVsPVwi6KeC5rWL57uf6K6hXCI+XG4gICAgICAgIDxzcGFuPuaAu+aYn+aYnyB7dG90YWxDb3VudH08L3NwYW4+XG4gICAgICAgIDxzcGFuPuW9k+WJjeetm+mAiSB7cmVjb3Jkcy5sZW5ndGh9PC9zcGFuPlxuICAgICAgICA8c3Bhbj7lt7LlvaLmiJDmmJ/luqcge2FjdGl2ZUNvbnN0ZWxsYXRpb25Db3VudH08L3NwYW4+XG4gICAgICAgIDxzcGFuPlxuICAgICAgICAgIHtpc01hbnVhbENvbnN0ZWxsYXRpb24gPyBcIuaJi+mAiVwiIDogXCLpmo/mnLpcIn3vvJp7YWN0aXZlQ29uc3RlbGxhdGlvbi5sYWJlbH1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgPC9kaXY+XG5cbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwib2JzZXJ2YXRpb24tbGlzdFwiIGFyaWEtbGFiZWw9XCLmmJ/mmJ/liJfooahcIj5cbiAgICAgICAge2RhdGVHcm91cHMubGVuZ3RoID8gKFxuICAgICAgICAgIGRhdGVHcm91cHMubWFwKChncm91cCkgPT4gKFxuICAgICAgICAgICAgPGRpdiBrZXk9e2dyb3VwLmRhdGV9IGNsYXNzTmFtZT1cIm9ic2VydmF0aW9uLWRhdGUtZ3JvdXBcIj5cbiAgICAgICAgICAgICAgPHN0cm9uZz57Z3JvdXAuZGF0ZX08L3N0cm9uZz5cbiAgICAgICAgICAgICAgPHNwYW4+e2dyb3VwLnJlY29yZHMubGVuZ3RofSDpopfmmJ88L3NwYW4+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICApKVxuICAgICAgICApIDogKFxuICAgICAgICAgIDxwPuW9k+WJjeetm+mAieS4i+i/mOayoeacieaYn+aYn+OAgjwvcD5cbiAgICAgICAgKX1cbiAgICAgIDwvZGl2PlxuICAgIDwvYXNpZGU+XG4gICk7XG59XG4iXSwiZmlsZSI6IkQ6L2FpLWNvZGluZy9zcmMvY29tcG9uZW50cy9PYnNlcnZhdGlvblBhbmVsLmpzeCJ9

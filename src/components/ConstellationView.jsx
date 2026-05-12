@@ -1,7 +1,7 @@
-import EmotionConstellationMap from "./EmotionConstellationMap";
-import StarItem from "./StarItem";
+import PresetConstellationLayer from "./PresetConstellationLayer";
+import StarLayer from "./StarLayer";
 
-export default function ConstellationView({ records, onSelectStar }) {
+export default function ConstellationView({ records, onSelectStar, constellationKey, skyBounds }) {
   if (!records.length) {
     return (
       <section className="constellation-view" role="region" aria-label="观测星空">
@@ -12,13 +12,13 @@ export default function ConstellationView({ records, onSelectStar }) {
 
   return (
     <section className="constellation-view" role="region" aria-label="观测星空">
-      <EmotionConstellationMap records={records} />
-
-      <div className="constellation-stars" aria-label="观测星星层">
-        {records.map((record) => (
-          <StarItem key={record.id} record={record} onClick={onSelectStar} />
-        ))}
-      </div>
+      <PresetConstellationLayer
+        records={records}
+        mode="observation"
+        constellationKey={constellationKey}
+        skyBounds={skyBounds}
+      />
+      <StarLayer records={records} onSelectStar={onSelectStar} />
     </section>
   );
 }

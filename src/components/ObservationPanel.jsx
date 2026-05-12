@@ -1,4 +1,5 @@
 import { emotionOptions } from "../config/emotionConfig";
+import { getConstellationByKey, zodiacConstellations } from "../config/presetConstellationConfig";
 import { buildEmotionConstellationGroups } from "../utils/constellationGroups";
 import { groupRecordsByDate } from "../utils/recordFilters";
 
@@ -13,11 +14,15 @@ export default function ObservationPanel({
   records,
   emotionFilter,
   dateFilter,
+  activeConstellationKey = "aries",
+  isManualConstellation = false,
   onEmotionFilterChange,
-  onDateFilterChange
+  onDateFilterChange,
+  onSelectConstellation
 }) {
   const activeConstellationCount = buildEmotionConstellationGroups(records).filter((group) => group.active).length;
   const dateGroups = groupRecordsByDate(records);
+  const activeConstellation = getConstellationByKey(activeConstellationKey);
 
   return (
     <aside className="observation-panel" role="region" aria-label="观测控制">
@@ -44,12 +49,30 @@ export default function ObservationPanel({
             ))}
           </select>
         </label>
+
+        <label>
+          <span>下个星座</span>
+          <select
+            value={activeConstellationKey}
+            onChange={(event) => onSelectConstellation?.(event.target.value)}
+            aria-label="选择下个星座"
+          >
+            {zodiacConstellations.map((constellation) => (
+              <option key={constellation.key} value={constellation.key}>
+                {constellation.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <div className="observation-stats" aria-label="观测统计">
         <span>总星星 {totalCount}</span>
         <span>当前筛选 {records.length}</span>
         <span>已形成星座 {activeConstellationCount}</span>
+        <span>
+          {isManualConstellation ? "手选" : "随机"}：{activeConstellation.label}
+        </span>
       </div>
 
       <div className="observation-list" aria-label="星星列表">

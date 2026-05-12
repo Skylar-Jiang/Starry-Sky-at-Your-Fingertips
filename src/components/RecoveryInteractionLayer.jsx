@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getRecoveryInteractionConfig, recoveryPointPositions } from "../config/recoveryInteractionConfig";
+import { getRecoveryInteractionConfig } from "../config/recoveryInteractionConfig";
 
 export default function RecoveryInteractionLayer({ emotion, active, targetStar, onComplete }) {
   const config = getRecoveryInteractionConfig(emotion);
@@ -8,11 +8,11 @@ export default function RecoveryInteractionLayer({ emotion, active, targetStar, 
 
   const points = useMemo(
     () =>
-      recoveryPointPositions.slice(0, config.count).map((position, index) => ({
+      config.points.slice(0, config.count).map((position, index) => ({
         ...position,
         id: `${emotion || "calm"}-${index}`
       })),
-    [config.count, emotion]
+    [config.count, config.points, emotion]
   );
 
   useEffect(() => {
@@ -43,6 +43,8 @@ export default function RecoveryInteractionLayer({ emotion, active, targetStar, 
   const targetX = targetStar?.x || 72;
   const targetY = targetStar?.y || 28;
   const progressText = `${config.progressLabel} ${Math.min(resolvedIds.length, config.requiredCount)}/${config.requiredCount}`;
+  const viewportWidth = typeof window === "undefined" ? 1200 : window.innerWidth;
+  const viewportHeight = typeof window === "undefined" ? 800 : window.innerHeight;
 
   return (
     <div
@@ -56,13 +58,22 @@ export default function RecoveryInteractionLayer({ emotion, active, targetStar, 
       </div>
       {points.map((point) => {
         const isResolved = resolvedIds.includes(point.id);
+        const resolveX = Math.round(targetX - (viewportWidth * point.x) / 100);
+        const resolveY = Math.round(targetY - (viewportHeight * point.y) / 100);
 
         return (
           <button
             key={point.id}
             className={`recovery-object ${config.className} ${isResolved ? "is-resolved" : ""}`}
             type="button"
-            style={{ left: `${point.x}%`, top: `${point.y}%`, "--i": point.id.split("-").at(-1) }}
+            style={{
+              left: `${point.x}%`,
+              top: `${point.y}%`,
+              "--i": point.id.split("-").at(-1),
+              "--recovery-size": config.size,
+              "--resolve-x": `${resolveX}px`,
+              "--resolve-y": `${resolveY}px`
+            }}
             onClick={() => handleResolve(point.id)}
             aria-label={`${config.actionLabel} ${Number(point.id.split("-").at(-1)) + 1}`}
             disabled={isResolved}

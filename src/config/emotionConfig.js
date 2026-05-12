@@ -37,7 +37,7 @@ export const emotionConfig = {
     starColor: "#ff9a68",
     accentColor: "#ffc08a",
     effects: ["warmFilter", "spark"],
-    feedbackText: "这团火光被放进星空里了，场景正在慢慢恢复平静。"
+    feedbackText: "这团发热的心情被放进星空里了，场景正在慢慢恢复平静。"
   },
   verySad: {
     label: "非常难过",

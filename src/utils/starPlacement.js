@@ -1,5 +1,7 @@
 import { createStarId } from "./id";
-import { getConstellationTemplate } from "../config/constellationTemplates";
+import { getConstellationByKey } from "../config/presetConstellationConfig";
+import { logConstellationProjection, projectConstellationNodes } from "./constellationProjection";
+import { chooseConstellationLayout } from "./constellationSelection";
 
 const SAFE_AREA = {
   marginX: 120,
@@ -23,20 +25,74 @@ function hasEnoughDistance(candidate, points, minDistance) {
   return points.every((point) => Math.hypot(candidate.x - point.x, candidate.y - point.y) >= minDistance);
 }
 
-function createTemplateCandidate({ emotion, minX, maxX, minY, maxY, existingStars, random }) {
-  if (!emotion) return null;
-  const template = getConstellationTemplate(emotion);
-  const sameEmotionCount = existingStars.filter((record) => record.emotion === emotion && record.star).length;
-  const templatePoint = template[sameEmotionCount % template.length];
-  if (!templatePoint) return null;
+function getFilledConstellationNodeState(existingStars = [], constellationKey) {
+  const nodeIds = new Set();
+  const indices = new Set();
 
-  const jitterX = Math.round((random() - 0.5) * 18);
-  const jitterY = Math.round((random() - 0.5) * 14);
+  for (const record of existingStars) {
+    const star = record?.star;
+    if (!star || star.constellationKey !== constellationKey) continue;
+    if (star.constellationNodeId) nodeIds.add(star.constellationNodeId);
+    if (Number.isFinite(star.constellationIndex)) indices.add(star.constellationIndex);
+  }
 
+  return { nodeIds, indices };
+}
+
+function getExistingConstellationLayout(existingStars = [], constellationKey) {
+  const record = existingStars.find((item) => item?.star?.constellationKey === constellationKey && item.star.constellationLayout);
+  return record?.star?.constellationLayout || null;
+}
+
+function hasExistingConstellationStars(existingStars = [], constellationKey) {
+  return existingStars.some((item) => item?.star?.constellationKey === constellationKey);
+}
+
+function createTemplateCandidate({ viewportWidth, viewportHeight, skyBounds, existingStars, random, constellationKey }) {
+  const constellation = getConstellationByKey(constellationKey);
+  const existingLayout = getExistingConstellationLayout(existingStars, constellation.key);
+  const constellationLayout = existingLayout || (
+    hasExistingConstellationStars(existingStars, constellation.key)
+      ? null
+      : chooseConstellationLayout({
+          constellation,
+          records: existingStars,
+          skyBounds,
+          viewportWidth,
+          viewportHeight,
+          random
+        })
+  );
+  const projectedNodes = projectConstellationNodes(
+    constellation,
+    skyBounds,
+    viewportWidth,
+    viewportHeight,
+    constellationLayout
+  );
+  const filled = getFilledConstellationNodeState(existingStars, constellation.key);
+  const availableNodes = projectedNodes
+    .filter((node) => !filled.nodeIds.has(node.id) && !filled.indices.has(node.index));
+
+  logConstellationProjection("starPlacement projectedNodes", {
+    constellation,
+    projectedNodes,
+    filledNodeIds: [...filled.nodeIds],
+    edges: constellation.edges
+  });
+
+  if (!availableNodes.length) return null;
+
+  const selectedIndex = Math.min(availableNodes.length - 1, Math.floor(random() * availableNodes.length));
+  const selectedNode = availableNodes[selectedIndex];
   return {
     id: createStarId(),
-    x: clamp(Math.round(minX + templatePoint.x * (maxX - minX) + jitterX), minX, maxX),
-    y: clamp(Math.round(minY + templatePoint.y * (maxY - minY) + jitterY), minY, maxY)
+    x: selectedNode.x,
+    y: selectedNode.y,
+    constellationKey: constellation.key,
+    constellationNodeId: selectedNode.id,
+    constellationIndex: selectedNode.index,
+    constellationLayout
   };
 }
 
@@ -45,18 +101,29 @@ export function createStarPlacement({
   viewportHeight,
   existingStars = [],
   emotion,
+  skyBounds,
+  constellationKey,
   random = Math.random
 } = {}) {
   const width = Number.isFinite(viewportWidth) ? viewportWidth : 1200;
   const height = Number.isFinite(viewportHeight) ? viewportHeight : 800;
+  const points = getExistingStarPoints(existingStars);
+  const targetConstellationKey = constellationKey || "aries";
+  if (emotion) {
+    return createTemplateCandidate({
+      viewportWidth: width,
+      viewportHeight: height,
+      skyBounds,
+      existingStars,
+      random,
+      constellationKey: targetConstellationKey
+    });
+  }
+
   const minX = SAFE_AREA.marginX;
   const maxX = Math.max(minX, width - SAFE_AREA.marginX);
   const minY = SAFE_AREA.top;
   const maxY = Math.max(minY, Math.round(height * SAFE_AREA.bottomRatio));
-  const points = getExistingStarPoints(existingStars);
-  const templateCandidate = createTemplateCandidate({ emotion, minX, maxX, minY, maxY, existingStars, random });
-
-  if (templateCandidate) return templateCandidate;
 
   let bestCandidate = null;
   let bestDistance = -1;

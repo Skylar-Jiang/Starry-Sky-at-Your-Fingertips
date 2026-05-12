@@ -54,3 +54,9 @@ desktop.ini
 *.7z
 *.tar
 *.tar.gz
+
+# Local browser profile / visual test artifacts
+visual-checks/chrome-profile/
+visual-checks/**/*.png
+visual-checks/**/*.webm
+visual-checks/**/*.log

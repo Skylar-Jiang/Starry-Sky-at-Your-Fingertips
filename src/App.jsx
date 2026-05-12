@@ -4,6 +4,71 @@ import DiaryModal from "./components/DiaryModal";
 import StarDetailModal from "./components/StarDetailModal";
 import { createEmotionRecord } from "./utils/record";
 import { clearRecords, loadRecords, saveRecords } from "./utils/storage";
+import { chooseNextConstellationKey } from "./utils/constellationSelection";
+import { projectConstellationNodes } from "./utils/constellationProjection";
+import { getEnvironmentComposition } from "./config/environmentCompositionConfig";
+import {
+  getConstellationByKey,
+  getRandomConstellationKey,
+  zodiacConstellations
+} from "./config/presetConstellationConfig";
+import { emotionOptionKeys } from "./config/emotionConfig";
+
+const visualEmotionKeys = new Set(emotionOptionKeys);
+
+function getRequestedEmotion() {
+  if (typeof window === "undefined") return "";
+  const emotion = new URLSearchParams(window.location.search).get("emotion") || "";
+  return visualEmotionKeys.has(emotion) ? emotion : "";
+}
+
+function getRequestedConstellationKey() {
+  if (typeof window === "undefined") return "";
+  const key = new URLSearchParams(window.location.search).get("constellation") || "";
+  return zodiacConstellations.some((constellation) => constellation.key === key) ? key : "";
+}
+
+function getRequestedSceneKey() {
+  if (typeof window === "undefined") return "lullaby";
+  return new URLSearchParams(window.location.search).get("scene") || "lullaby";
+}
+
+function buildConstellationDemoRecords(constellationKey = "pisces", emotion = "calm", sceneKey = "lullaby") {
+  const constellation = getConstellationByKey(constellationKey);
+  const composition = getEnvironmentComposition(emotion, sceneKey);
+  const viewportWidth = typeof window === "undefined" ? 1365 : window.innerWidth;
+  const viewportHeight = typeof window === "undefined" ? 768 : window.innerHeight;
+  const projectedNodes = projectConstellationNodes(
+    constellation,
+    composition.skyBounds,
+    viewportWidth,
+    viewportHeight
+  );
+
+  return projectedNodes.slice(0, 4).map((point, index) => ({
+    id: `visual_constellation_${index}`,
+    text: `第 ${index + 1} 颗星星`,
+    emotion: "calm",
+    createdAt: `2026-05-11 20:0${index}:00`,
+    star: {
+      id: `visual_star_${index}`,
+      x: point.x,
+      y: point.y,
+      constellationKey: constellation.key,
+      constellationNodeId: point.id,
+      constellationIndex: index
+    },
+    title: "",
+    aiSuggestedEmotion: "",
+    aiFeedback: "这颗星星已经被你安放好了。",
+    favorite: false,
+    deleted: false,
+    audioUrl: "",
+    imageUrl: "",
+    diaryBookId: "default",
+    gestureCreated: false
+  }));
+}
 
 export default function App() {
   const [records, setRecords] = useState([]);
@@ -17,12 +82,44 @@ export default function App() {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
   const [recentCompletedStar, setRecentCompletedStar] = useState(null);
+  const [activeConstellationKey, setActiveConstellationKey] = useState(
+    () => getRequestedConstellationKey() || getRandomConstellationKey()
+  );
+  const [isManualConstellation, setIsManualConstellation] = useState(Boolean(getRequestedConstellationKey()));
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requestedEmotion = getRequestedEmotion();
+    const requestedConstellation = getRequestedConstellationKey();
+    if (params.get("reset") === "1") {
+      clearRecords();
+      setRecords([]);
+      setCurrentEmotion(requestedEmotion || "calm");
+      setActiveConstellationKey(requestedConstellation || getRandomConstellationKey());
+      setIsManualConstellation(Boolean(requestedConstellation));
+      return;
+    }
+    if (params.get("demo") === "constellation") {
+      const demoEmotion = requestedEmotion || "calm";
+      const demoRecords = buildConstellationDemoRecords(
+        requestedConstellation || "pisces",
+        demoEmotion,
+        getRequestedSceneKey()
+      );
+      setRecords(demoRecords);
+      setCurrentEmotion(demoEmotion);
+      setActiveConstellationKey(requestedConstellation || "pisces");
+      setIsManualConstellation(Boolean(requestedConstellation));
+      return;
+    }
     const savedRecords = loadRecords();
     setRecords(savedRecords);
     const latestStarred = [...savedRecords].reverse().find((record) => record.star);
-    if (latestStarred) setCurrentEmotion(latestStarred.emotion);
+    if (requestedEmotion) {
+      setCurrentEmotion(requestedEmotion);
+    } else if (latestStarred) {
+      setCurrentEmotion(latestStarred.emotion);
+    }
   }, []);
 
   const starredRecords = useMemo(
@@ -79,9 +176,25 @@ export default function App() {
     const nextRecords = records.map((record) =>
       record.id === payload.recordId ? { ...record, star: payload.star } : record
     );
+    const completedConstellation = getConstellationByKey(payload.star?.constellationKey);
+    const completedCount = nextRecords.filter(
+      (record) => !record.deleted && record.star?.constellationKey === completedConstellation.key
+    ).length;
 
     setRecords(nextRecords);
     saveRecords(nextRecords);
+    if (completedCount >= completedConstellation.requiredStarCount) {
+      setActiveConstellationKey(
+        chooseNextConstellationKey({
+          records: nextRecords,
+          currentKey: completedConstellation.key,
+          skyBounds: payload.skyBounds,
+          viewportWidth: payload.viewportWidth,
+          viewportHeight: payload.viewportHeight
+        })
+      );
+      setIsManualConstellation(false);
+    }
     setPendingRecord(null);
     setCurrentEmotion(targetRecord.emotion);
     setRecentCompletedEmotion(targetRecord.emotion);
@@ -144,6 +257,14 @@ export default function App() {
     setDiaryEmotion("calm");
     setDiaryError("");
     setFlowPhase("idle");
+    setActiveConstellationKey(getRandomConstellationKey());
+    setIsManualConstellation(false);
+  }
+
+  function handleSelectConstellation(key) {
+    const selectedConstellation = getConstellationByKey(key);
+    setActiveConstellationKey(selectedConstellation.key);
+    setIsManualConstellation(true);
   }
 
   function handleInjectDemoData() {
@@ -217,6 +338,8 @@ export default function App() {
         currentEmotion={currentEmotion}
         flowPhase={flowPhase}
         pendingRecord={pendingRecord}
+        activeConstellationKey={activeConstellationKey}
+        isManualConstellation={isManualConstellation}
         recentCompletedEmotion={recentCompletedEmotion}
         recentCompletedStar={recentCompletedStar}
         onOpenDiary={handleOpenDiary}
@@ -228,6 +351,7 @@ export default function App() {
         onSelectStar={handleSelectStar}
         onClearRecords={handleClearRecords}
         onInjectDemoData={handleInjectDemoData}
+        onSelectConstellation={handleSelectConstellation}
       />
 
       <DiaryModal

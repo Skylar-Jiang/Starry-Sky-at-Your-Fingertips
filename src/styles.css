@@ -33,7 +33,10 @@ button {
 
 .scene-background-image,
 .scene-overlay,
-.effects-layer {
+.effects-layer,
+.environment-color-wash,
+.environment-foreground,
+.environment-object {
   position: absolute;
   inset: 0;
 }
@@ -43,6 +46,156 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.scene-emotion-base {
+  z-index: 0;
+}
+
+.environment-color-wash {
+  z-index: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.environment-wash-happy {
+  background: radial-gradient(circle at 50% 28%, rgba(255, 217, 103, 0.22), transparent 38%);
+}
+
+.environment-wash-calm {
+  background: radial-gradient(circle at 48% 24%, rgba(143, 211, 255, 0.18), transparent 40%);
+}
+
+.environment-wash-wronged,
+.environment-wash-verySad {
+  background: radial-gradient(circle at 42% 28%, rgba(169, 200, 255, 0.18), transparent 42%);
+}
+
+.environment-wash-angry {
+  background: radial-gradient(circle at 52% 64%, rgba(255, 154, 104, 0.22), transparent 44%);
+}
+
+.environment-wash-anxious {
+  background: radial-gradient(circle at 55% 30%, rgba(184, 242, 230, 0.18), transparent 42%);
+}
+
+.environment-foreground,
+.environment-object {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.environment-foreground::before,
+.environment-foreground::after,
+.environment-object::before,
+.environment-object::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.environment-foreground-waves::before {
+  left: -8%;
+  right: -8%;
+  bottom: -6%;
+  height: 36%;
+  background:
+    radial-gradient(ellipse at 48% 10%, rgba(230, 248, 255, 0.2), transparent 32%),
+    radial-gradient(ellipse at 42% 34%, rgba(113, 185, 226, 0.18), transparent 48%),
+    radial-gradient(ellipse at 70% 46%, rgba(196, 232, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, transparent 0 10%, rgba(12, 45, 66, 0.5) 38%, rgba(5, 18, 31, 0.9));
+  filter: blur(0.1px);
+}
+
+.environment-foreground-waves::after {
+  left: 18%;
+  right: 14%;
+  bottom: 19%;
+  height: 11%;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 50% 44%, rgba(230, 248, 255, 0.3), transparent 66%),
+    linear-gradient(175deg, transparent 8%, rgba(225, 245, 255, 0.18) 10%, transparent 13%),
+    linear-gradient(183deg, transparent 34%, rgba(174, 222, 250, 0.15) 36%, transparent 39%),
+    linear-gradient(178deg, transparent 58%, rgba(225, 245, 255, 0.12) 60%, transparent 63%);
+  opacity: 0.86;
+  filter: blur(0.55px);
+}
+
+.environment-foreground-ground::before {
+  left: -10%;
+  right: -10%;
+  bottom: -12%;
+  height: 35%;
+  background:
+    radial-gradient(ellipse at 50% 4%, rgba(255, 177, 94, 0.2), transparent 34%),
+    linear-gradient(180deg, transparent, rgba(26, 20, 21, 0.86));
+}
+
+.environment-foreground-rain::before {
+  left: -8%;
+  right: -8%;
+  bottom: -10%;
+  height: 32%;
+  background:
+    radial-gradient(ellipse at 45% 0%, rgba(202, 228, 255, 0.14), transparent 44%),
+    linear-gradient(180deg, transparent, rgba(8, 20, 34, 0.82));
+}
+
+.environment-foreground-cloud::before {
+  left: 8%;
+  right: 8%;
+  bottom: 4%;
+  height: 28%;
+  border-radius: 50% 50% 38% 42%;
+  background:
+    radial-gradient(ellipse at 30% 46%, rgba(224, 242, 255, 0.24), transparent 34%),
+    radial-gradient(ellipse at 64% 42%, rgba(255, 238, 182, 0.16), transparent 38%),
+    linear-gradient(180deg, rgba(123, 170, 205, 0.1), rgba(14, 26, 48, 0.66));
+  filter: blur(0.4px);
+}
+
+.environment-object-campfire::before {
+  left: 61%;
+  bottom: 22%;
+  width: min(136px, 16vw);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(255, 224, 138, 0.95) 0 10%, rgba(255, 122, 78, 0.7) 18%, transparent 38%),
+    radial-gradient(circle, rgba(255, 150, 82, 0.22), transparent 66%);
+  filter: drop-shadow(0 0 28px rgba(255, 132, 82, 0.6));
+  transform: translateX(-50%);
+}
+
+.environment-object-umbrella::before {
+  left: 58%;
+  bottom: 24%;
+  width: min(160px, 20vw);
+  height: min(78px, 10vw);
+  border-radius: 100% 100% 12% 12%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(199, 224, 255, 0.2), rgba(51, 86, 128, 0.38) 62%, transparent 63%);
+  transform: rotate(-4deg);
+}
+
+.environment-object-moon-reflection::before {
+  left: 50%;
+  bottom: 24%;
+  width: min(240px, 28vw);
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse, rgba(221, 244, 255, 0.28), transparent 72%);
+  transform: translateX(-50%);
+}
+
+.environment-object-lullaby::before {
+  left: 50%;
+  bottom: 29%;
+  width: min(220px, 26vw);
+  height: 54px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse, rgba(255, 242, 198, 0.2), rgba(151, 196, 230, 0.16) 56%, transparent 72%);
+  transform: translateX(-50%);
 }
 
 .scene-background-placeholder {
@@ -101,10 +254,10 @@ button {
 }
 
 .scene-overlay {
-  z-index: 1;
+  z-index: 4;
   background:
-    linear-gradient(180deg, rgba(5, 13, 28, 0.32), rgba(5, 13, 28, 0.62)),
-    radial-gradient(circle at 52% 25%, rgba(255, 239, 173, 0.16), transparent 32%);
+    linear-gradient(180deg, rgba(5, 13, 28, 0.12), rgba(5, 13, 28, 0.46)),
+    radial-gradient(circle at 52% 25%, rgba(255, 239, 173, 0.1), transparent 32%);
 }
 
 .scene-content {
@@ -336,19 +489,24 @@ h2 {
   overflow: visible;
 }
 
-.main-constellation-hint polyline {
+.main-constellation-hint path {
   fill: none;
-  stroke: rgba(164, 202, 255, 0.32);
-  stroke-width: 2;
+  stroke: color-mix(in srgb, var(--constellation-color, #a4caff), transparent 54%);
+  stroke-width: 0.72;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 8 11;
-  filter: drop-shadow(0 0 8px rgba(164, 202, 255, 0.42));
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--constellation-color, #a4caff), transparent 50%));
 }
 
-.main-constellation-hint.is-stronger polyline {
-  stroke: rgba(194, 222, 255, 0.5);
-  stroke-width: 2.6;
+.main-constellation-hint.is-preview path {
+  stroke-dasharray: 4 12;
+  opacity: 0.62;
+}
+
+.main-constellation-hint.is-stronger path {
+  stroke: color-mix(in srgb, var(--constellation-color, #c2deff), transparent 34%);
+  stroke-width: 0.92;
 }
 
 .main-constellation-hint p {
@@ -370,9 +528,9 @@ h2 {
 
 .planet-stage {
   display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(300px, 440px) minmax(360px, 640px);
+  grid-template-columns: minmax(220px, 330px) minmax(320px, 420px) minmax(360px, 460px);
   align-items: end;
-  gap: clamp(18px, 4vw, 48px);
+  gap: clamp(18px, 2.6vw, 34px);
 }
 
 .planet-copy {
@@ -402,6 +560,8 @@ h2 {
   justify-items: center;
   align-items: end;
   min-height: 320px;
+  isolation: isolate;
+  overflow: visible;
 }
 
 .companion-layer {
@@ -423,12 +583,13 @@ h2 {
 
 .recovery-interaction-layer::before {
   position: absolute;
-  inset: 0;
+  inset: -16%;
   content: "";
   background:
-    radial-gradient(circle at 50% 28%, rgba(255, 245, 194, 0.12), transparent 34%),
-    radial-gradient(circle at 50% 74%, rgba(185, 230, 255, 0.13), transparent 42%);
-  opacity: 0.78;
+    radial-gradient(circle at var(--target-x, 50%) var(--target-y, 32%), rgba(255, 245, 194, 0.16), transparent 26%),
+    radial-gradient(circle at 50% 74%, rgba(185, 230, 255, 0.08), transparent 48%);
+  opacity: 0.56;
+  filter: blur(2px);
   transition: opacity 0.6s ease;
 }
 
@@ -474,8 +635,8 @@ h2 {
 .recovery-object {
   position: absolute;
   display: grid;
-  width: clamp(42px, 5.8vw, 62px);
-  height: clamp(42px, 5.8vw, 62px);
+  width: var(--recovery-size, clamp(34px, 4.8vw, 52px));
+  height: var(--recovery-size, clamp(34px, 4.8vw, 52px));
   place-items: center;
   border: 0;
   border-radius: 999px;
@@ -491,8 +652,8 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  opacity: 0.86;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.24));
+  opacity: 0.78;
+  filter: drop-shadow(0 0 9px rgba(255, 255, 255, 0.2));
   transition:
     filter 0.18s ease,
     transform 0.18s ease,
@@ -500,8 +661,8 @@ h2 {
 }
 
 .recovery-object:hover img {
-  filter: brightness(1.18) drop-shadow(0 0 22px rgba(255, 238, 174, 0.5));
-  transform: scale(1.12);
+  filter: brightness(1.12) drop-shadow(0 0 18px rgba(255, 238, 174, 0.42));
+  transform: scale(1.08);
 }
 
 .recovery-object.is-resolved {
@@ -519,8 +680,32 @@ h2 {
   inset: 16%;
   border-radius: 999px;
   opacity: 0;
-  background: radial-gradient(circle, rgba(255, 247, 196, 0.96) 0 10%, rgba(185, 230, 255, 0.34) 38%, transparent 72%);
+  background:
+    radial-gradient(circle, rgba(255, 247, 196, 0.92) 0 9%, rgba(185, 230, 255, 0.26) 34%, transparent 70%),
+    radial-gradient(circle at 28% 38%, rgba(255, 255, 255, 0.72) 0 3%, transparent 13%);
   pointer-events: none;
+}
+
+.recovery-soft-light img,
+.recovery-glow img {
+  opacity: 0.68;
+  filter: blur(0.1px) drop-shadow(0 0 12px rgba(210, 238, 255, 0.22));
+}
+
+.recovery-raindrop img,
+.recovery-bubble img {
+  opacity: 0.74;
+  filter: drop-shadow(0 0 8px rgba(185, 230, 255, 0.2));
+}
+
+.recovery-ember img {
+  opacity: 0.82;
+  filter: drop-shadow(0 0 10px rgba(255, 154, 104, 0.34));
+}
+
+.recovery-lake-light img {
+  opacity: 0.72;
+  filter: saturate(0.92) drop-shadow(0 0 11px rgba(143, 211, 255, 0.24));
 }
 
 .recovery-object.is-resolved .recovery-object-dust {
@@ -585,13 +770,14 @@ h2 {
   overflow: visible;
 }
 
-.recovery-constellation-button polyline {
+.recovery-constellation-button path {
   fill: none;
   stroke: var(--cue-accent);
-  stroke-dasharray: 5 6;
+  stroke-dasharray: 4 8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cue-accent), transparent 42%));
 }
 
 .recovery-constellation-button circle {
@@ -622,26 +808,26 @@ h2 {
 }
 
 .companion-fox {
-  right: 5%;
-  bottom: 4px;
-  width: min(145px, 22vw);
+  width: min(145px, max(82px, var(--companion-width, 12%)));
+  transform: translateX(-50%);
 }
 
 .companion-rose {
-  left: 6%;
-  bottom: 18px;
-  width: min(106px, 16vw);
+  width: min(106px, max(58px, var(--flower-width, 8%)));
+  transform: translateX(-50%);
 }
 
 .character-actor {
+  position: absolute;
   display: grid;
   place-items: end center;
-  min-height: 270px;
+  min-height: 0;
   transform-origin: 50% 100%;
+  transform: translateX(-50%);
 }
 
 .character-actor-image {
-  width: min(380px, 34vw);
+  width: min(380px, max(240px, 100%));
   max-height: 380px;
   object-fit: contain;
   filter: drop-shadow(0 22px 24px rgba(0, 0, 0, 0.44));
@@ -758,6 +944,7 @@ h2 {
 }
 
 .paper-ball-scene {
+  position: relative;
   gap: 18px;
 }
 
@@ -849,6 +1036,21 @@ h2 {
   transform: scale(1.1);
 }
 
+.paper-meteor-trail {
+  position: fixed;
+  left: 50%;
+  top: 58%;
+  z-index: 42;
+  width: 160px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--meteor-color, #ffe08a), white 20%), transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--meteor-color, #ffe08a), transparent 26%);
+  pointer-events: none;
+  transform-origin: 100% 50%;
+  animation: meteor-to-target 0.78s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
 .paper-throw-hint {
   margin: 0;
   color: #f8fbff;
@@ -875,9 +1077,19 @@ h2 {
 }
 
 .star-layer {
-  position: absolute;
+  position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 20;
+  overflow: visible;
+  border-radius: 999px;
+  pointer-events: none;
+  clip-path: inset(0 round 12px);
+}
+
+.star-layer::before {
+  content: none;
 }
 
 .star-item {
@@ -891,6 +1103,7 @@ h2 {
   filter: drop-shadow(0 0 12px var(--star-color));
   transform: translate(-50%, -50%);
   animation: star-twinkle 3s infinite ease-in-out;
+  pointer-events: auto;
 }
 
 .star-item img {
@@ -1022,14 +1235,13 @@ h2 {
 .companion-layer-wronged .companion-fox,
 .companion-layer-verySad .companion-fox,
 .companion-layer-sad .companion-fox {
-  right: 1%;
   animation: fox-comfort 4.8s ease-in-out infinite;
 }
 
 .companion-layer-wronged .companion-rose,
 .companion-layer-verySad .companion-rose,
 .companion-layer-sad .companion-rose {
-  transform: rotate(-4deg);
+  transform: translateX(-50%) rotate(-4deg);
 }
 
 .companion-layer-angry .companion-rose {
@@ -1124,19 +1336,28 @@ h2 {
   overflow: visible;
 }
 
-.constellation-lines polyline {
+.constellation-lines path {
   fill: none;
   stroke: var(--constellation-color, rgba(185, 230, 255, 0.72));
-  stroke-dasharray: 8 7;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3.2;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
-  opacity: 0.92;
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.28));
+  opacity: 0.74;
 }
 
-.shared-tear-lines polyline {
+.shared-tear-lines path {
   stroke: rgba(214, 238, 255, 0.82);
+}
+
+.constellation-glow-points circle {
+  fill: rgba(235, 248, 255, 0.92);
+  stroke: color-mix(in srgb, var(--constellation-color, #b9e6ff), white 28%);
+  stroke-width: 0.28;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--constellation-color, #b9e6ff), transparent 35%));
+  animation: constellation-glow-breathe 3.4s ease-in-out infinite;
+  transform-origin: center;
 }
 
 .constellation-empty {
@@ -1476,6 +1697,17 @@ h2 {
   }
 }
 
+@keyframes constellation-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.68;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes character-breathe {
   0%,
   100% {
@@ -1566,7 +1798,29 @@ h2 {
 
   100% {
     opacity: 0;
-    transform: translate(calc(-50% + 80px), calc(-50% - 86px)) scale(0.22);
+    transform: translate(calc(-50% + var(--resolve-x, 80px)), calc(-50% + var(--resolve-y, -86px))) scale(0.22);
+  }
+}
+
+@keyframes meteor-to-target {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-18deg) scaleX(0.28);
+  }
+
+  28% {
+    opacity: 0.92;
+    transform: translate(-36%, -78%) rotate(-28deg) scaleX(0.9);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(var(--meteor-target-x, 50vw) - 50vw),
+        calc(var(--meteor-target-y, 24vh) - 58vh)
+      )
+      rotate(-36deg)
+      scaleX(0.18);
   }
 }
 
@@ -1771,6 +2025,342 @@ h2 {
   clip-path: inset(50%);
 }
 
+.base-sky-layer,
+.scene-environment-layer,
+.scene-effect-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.base-sky-layer {
+  z-index: 0;
+  background: #071321;
+}
+
+.base-sky-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scene-environment-layer {
+  z-index: 2;
+  overflow: hidden;
+}
+
+.scene-effect-layer {
+  z-index: 5;
+}
+
+.scene-effect-layer .effects-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.scene-platform-image,
+.scene-platform-effect-image {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(78px, 10vh, 126px);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.scene-environment-layer .scene-platform-image,
+.scene-environment-layer .scene-platform-effect-image {
+  opacity: 0;
+}
+
+.scene-platform-image {
+  z-index: 2;
+  width: min(760px, 54vw);
+  max-height: 34vh;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.38));
+}
+
+.scene-platform-effect-image {
+  z-index: 3;
+  width: min(420px, 30vw);
+  opacity: 0.76;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 22px rgba(190, 230, 255, 0.28));
+}
+
+.scene-environment-waves .scene-platform-image {
+  bottom: clamp(74px, 9vh, 118px);
+  width: min(860px, 62vw);
+}
+
+.scene-environment-waves .scene-platform-effect-image {
+  bottom: clamp(142px, 16vh, 190px);
+  width: min(380px, 34vw);
+}
+
+.scene-environment-campfire .scene-platform-image {
+  bottom: clamp(82px, 10vh, 130px);
+  width: min(520px, 38vw);
+}
+
+.scene-environment-campfire .scene-platform-effect-image {
+  bottom: clamp(126px, 15vh, 180px);
+  width: min(260px, 20vw);
+  opacity: 0.86;
+  filter: drop-shadow(0 0 36px rgba(255, 145, 77, 0.58));
+}
+
+.scene-environment-lullaby .scene-platform-image {
+  bottom: clamp(84px, 10vh, 134px);
+  width: min(690px, 52vw);
+}
+
+.scene-environment-lullaby .scene-platform-effect-image {
+  bottom: clamp(142px, 16vh, 186px);
+  width: min(360px, 28vw);
+}
+
+.scene-environment-rain .scene-platform-image {
+  bottom: clamp(76px, 9vh, 120px);
+  width: min(760px, 56vw);
+}
+
+.scene-environment-rain .scene-platform-effect-image {
+  bottom: clamp(194px, 22vh, 260px);
+  width: min(320px, 28vw);
+}
+
+.scene-character-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.scene-foreground-stage {
+  position: absolute;
+  left: 47%;
+  bottom: 0;
+  width: min(610px, 42vw);
+  height: min(390px, 42vh);
+  transform: translateX(-50%);
+  transform-origin: 50% 88%;
+  animation: foreground-breathe 6.8s ease-in-out infinite;
+}
+
+.scene-foreground-platform,
+.scene-emotion-group,
+.scene-complete-foreground {
+  position: absolute;
+  left: 50%;
+  object-fit: contain;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.scene-foreground-platform {
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  max-height: 68%;
+  filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.44));
+}
+
+.scene-emotion-group {
+  bottom: 12%;
+  z-index: 2;
+  width: 73%;
+  max-height: 88%;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.26));
+}
+
+.foreground-scene-waves .scene-foreground-stage,
+.foreground-scene-rain .scene-foreground-stage {
+  width: min(660px, 45vw);
+}
+
+.foreground-scene-lullaby .scene-foreground-platform {
+  width: 78%;
+}
+
+.foreground-scene-lullaby .scene-emotion-group {
+  bottom: 18%;
+  width: 60%;
+}
+
+.foreground-scene-waves .scene-emotion-group {
+  bottom: 14%;
+  width: 58%;
+}
+
+.foreground-scene-rain .scene-emotion-group {
+  bottom: 15%;
+  width: 58%;
+}
+
+.scene-complete-foreground {
+  bottom: 0;
+  z-index: 3;
+  width: 100%;
+  max-height: 100%;
+  filter:
+    drop-shadow(0 0 18px rgba(255, 167, 83, 0.16))
+    drop-shadow(0 24px 30px rgba(0, 0, 0, 0.42));
+}
+
+.foreground-scene-campfire .scene-foreground-stage {
+  left: 48%;
+  bottom: -2px;
+  width: min(650px, 44vw);
+  height: min(440px, 45vh);
+}
+
+.foreground-emotion-verySad .scene-emotion-group,
+.foreground-emotion-wronged .scene-emotion-group,
+.foreground-emotion-anxious .scene-emotion-group {
+  filter:
+    saturate(0.94)
+    drop-shadow(0 18px 22px rgba(0, 0, 0, 0.28));
+}
+
+@keyframes foreground-breathe {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-8px) scale(1.012);
+  }
+}
+
+.preset-constellation-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;
+}
+
+.preset-constellation-layer svg,
+.preset-constellation-node-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.preset-constellation-layer svg {
+  overflow: visible;
+}
+
+.preset-constellation-outline line {
+  stroke: rgba(206, 233, 255, 0.72);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-dasharray: 4 7;
+  vector-effect: non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 5px rgba(168, 218, 255, 0.42))
+    drop-shadow(0 0 10px rgba(255, 233, 172, 0.12));
+}
+
+.preset-constellation-outline line.is-anchored {
+  stroke: rgba(228, 244, 255, 0.84);
+}
+
+.preset-constellation-outline.is-forming line {
+  stroke-dasharray: 4 7;
+}
+
+.preset-constellation-outline.is-completed line {
+  stroke: rgba(232, 248, 255, 0.9);
+  stroke-width: 1.35;
+  stroke-dasharray: none;
+  filter:
+    drop-shadow(0 0 6px rgba(192, 228, 255, 0.54))
+    drop-shadow(0 0 16px rgba(255, 238, 186, 0.2));
+  animation: preset-constellation-complete-line 2.4s ease-out both;
+}
+
+.preset-constellation-outline.is-completed line.is-anchored {
+  stroke: rgba(246, 252, 255, 0.96);
+}
+
+.preset-constellation-layer p {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  transform: translateX(74%);
+  margin: 0;
+  border: 1px solid rgba(202, 228, 255, 0.2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: #dcefff;
+  background: rgba(6, 17, 34, 0.34);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.preset-constellation-observation {
+  z-index: 21;
+}
+
+@keyframes preset-constellation-complete-line {
+  0% {
+    opacity: 0.62;
+    stroke-width: 1.1;
+    filter:
+      drop-shadow(0 0 4px rgba(192, 228, 255, 0.34))
+      drop-shadow(0 0 10px rgba(255, 238, 186, 0.1));
+  }
+
+  38% {
+    opacity: 1;
+    stroke-width: 1.65;
+    filter:
+      drop-shadow(0 0 8px rgba(210, 238, 255, 0.68))
+      drop-shadow(0 0 20px rgba(255, 238, 186, 0.26));
+  }
+
+  100% {
+    opacity: 0.9;
+    stroke-width: 1.35;
+    filter:
+      drop-shadow(0 0 6px rgba(192, 228, 255, 0.54))
+      drop-shadow(0 0 16px rgba(255, 238, 186, 0.2));
+  }
+}
+
+.recovery-interaction-layer,
+.recovery-scene-rain,
+.recovery-scene-ember,
+.recovery-scene-bubble,
+.recovery-scene-lake,
+.recovery-scene-glow,
+.recovery-scene-soft {
+  background: transparent;
+}
+
+.recovery-interaction-layer::before {
+  inset: 0;
+  background: radial-gradient(circle at var(--target-x, 50%) var(--target-y, 32%), rgba(255, 235, 168, 0.16), transparent 18%);
+  opacity: 0.58;
+  filter: blur(1px);
+}
+
+.recovery-interaction-layer.is-complete::before {
+  background: radial-gradient(circle at var(--target-x, 50%) var(--target-y, 32%), rgba(255, 238, 172, 0.2), transparent 22%);
+}
+
+.recovery-object-dust {
+  background:
+    radial-gradient(circle, rgba(255, 247, 196, 0.96) 0 8%, rgba(185, 230, 255, 0.2) 32%, transparent 68%),
+    radial-gradient(circle at 28% 38%, rgba(255, 255, 255, 0.8) 0 3%, transparent 12%);
+}
+
 .modal-heading {
   justify-content: space-between;
   gap: 14px;
@@ -1939,12 +2529,10 @@ textarea {
   }
 
   .companion-fox {
-    right: 0;
     width: min(116px, 28vw);
   }
 
   .companion-rose {
-    left: 1%;
     width: min(82px, 20vw);
   }
 
@@ -2011,6 +2599,40 @@ textarea {
 
   .emotion-selector {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .scene-content {
+    grid-template-rows: auto minmax(240px, 38vh) auto;
+    padding: 24px 28px 22px;
+  }
+
+  .planet-stage {
+    grid-template-columns: minmax(220px, 1fr) minmax(300px, 390px);
+    align-items: end;
+    gap: 18px;
+  }
+
+  .stage-actions {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .scene-visuals {
+    min-height: 260px;
+  }
+
+  .character-actor-image {
+    width: min(285px, 100%);
+  }
+
+  .scene-platform-image {
+    width: min(680px, 74vw);
+  }
+
+  .scene-environment-campfire .scene-platform-image {
+    width: min(500px, 54vw);
   }
 }
 

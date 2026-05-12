@@ -13,20 +13,40 @@ export const recoveryInteractionConfig = {
     resolvedAsset: `${recoveryAssetRoot}/raindrop_light_dust.png`,
     count: 7,
     requiredCount: 5,
+    size: "clamp(34px, 4.8vw, 52px)",
+    points: [
+      { x: 18, y: 28 },
+      { x: 31, y: 46 },
+      { x: 43, y: 23 },
+      { x: 58, y: 50 },
+      { x: 72, y: 30 },
+      { x: 82, y: 45 },
+      { x: 27, y: 66 }
+    ],
     promptText: "雨滴落下来了。轻轻点它们，让委屈变成一点点星光。",
     completedText
   },
   angry: {
-    label: "火星",
-    progressLabel: "慢慢冷却火星",
-    actionLabel: "轻点火星，让它慢慢冷却",
-    className: "recovery-ember",
-    sceneClassName: "recovery-scene-ember",
-    asset: `${recoveryAssetRoot}/ember_angry.png`,
-    resolvedAsset: `${recoveryAssetRoot}/ember_cooling.png`,
+    label: "星尘",
+    progressLabel: "收拢发热星尘",
+    actionLabel: "轻点星尘，让它慢慢安静",
+    className: "recovery-soft-light",
+    sceneClassName: "recovery-scene-soft",
+    asset: `${recoveryAssetRoot}/calm_soft_mote.png`,
+    resolvedAsset: `${recoveryAssetRoot}/raindrop_light_dust.png`,
     count: 7,
     requiredCount: 5,
-    promptText: "有些火星还在发热。点一点，让它们冷却成柔和的光。",
+    size: "clamp(30px, 4.4vw, 48px)",
+    points: [
+      { x: 20, y: 55 },
+      { x: 34, y: 32 },
+      { x: 48, y: 62 },
+      { x: 60, y: 28 },
+      { x: 75, y: 48 },
+      { x: 84, y: 34 },
+      { x: 42, y: 44 }
+    ],
+    promptText: "有些星尘还在发热。点一点，让它们安静成柔和的光。",
     completedText
   },
   anxious: {
@@ -39,6 +59,15 @@ export const recoveryInteractionConfig = {
     resolvedAsset: `${recoveryAssetRoot}/bubble_stardust_pop.png`,
     count: 6,
     requiredCount: 5,
+    size: "clamp(32px, 4.9vw, 54px)",
+    points: [
+      { x: 19, y: 38 },
+      { x: 33, y: 62 },
+      { x: 46, y: 31 },
+      { x: 62, y: 58 },
+      { x: 76, y: 35 },
+      { x: 84, y: 57 }
+    ],
     promptText: "泡泡和沙尘在漂浮。慢慢点破它们，把焦虑交给星空。",
     completedText
   },
@@ -52,6 +81,15 @@ export const recoveryInteractionConfig = {
     resolvedAsset: `${recoveryAssetRoot}/raindrop_light_dust.png`,
     count: 6,
     requiredCount: 4,
+    size: "clamp(38px, 5.2vw, 58px)",
+    points: [
+      { x: 21, y: 58 },
+      { x: 36, y: 48 },
+      { x: 50, y: 66 },
+      { x: 64, y: 45 },
+      { x: 76, y: 61 },
+      { x: 84, y: 51 }
+    ],
     promptText: "泪湖里有很小的光。点亮它们，让水面慢慢安静。",
     completedText
   },
@@ -65,6 +103,15 @@ export const recoveryInteractionConfig = {
     resolvedAsset: `${recoveryAssetRoot}/raindrop_light_dust.png`,
     count: 6,
     requiredCount: 4,
+    size: "clamp(28px, 4.2vw, 44px)",
+    points: [
+      { x: 18, y: 34 },
+      { x: 32, y: 24 },
+      { x: 46, y: 42 },
+      { x: 61, y: 25 },
+      { x: 74, y: 44 },
+      { x: 83, y: 30 }
+    ],
     promptText: "把这份开心分成小小光点，轻轻送进星空。",
     completedText
   },
@@ -78,6 +125,15 @@ export const recoveryInteractionConfig = {
     resolvedAsset: `${recoveryAssetRoot}/raindrop_light_dust.png`,
     count: 6,
     requiredCount: 4,
+    size: "clamp(28px, 4vw, 42px)",
+    points: [
+      { x: 22, y: 32 },
+      { x: 36, y: 51 },
+      { x: 50, y: 30 },
+      { x: 63, y: 54 },
+      { x: 76, y: 34 },
+      { x: 82, y: 50 }
+    ],
     promptText: "星空里有柔和的微光。点一点，让它们回到星星旁边。",
     completedText
   }

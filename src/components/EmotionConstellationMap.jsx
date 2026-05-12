@@ -1,5 +1,5 @@
 import { constellationConfig, shouldShowTearLake } from "../config/constellationConfig";
-import { buildEmotionConstellationGroups, buildLinePoints } from "../utils/constellationGroups";
+import { buildEmotionConstellationGroups, buildGlowPoints, buildSmoothLinePath } from "../utils/constellationGroups";
 
 export default function EmotionConstellationMap({ records }) {
   const groups = buildEmotionConstellationGroups(records).filter((group) => group.active);
@@ -12,8 +12,13 @@ export default function EmotionConstellationMap({ records }) {
       {showSharedTearLake ? (
         <>
           <img className="tear-lake-constellation" src={tearLake.image} alt={tearLake.label} />
-          <svg className="constellation-lines shared-tear-lines" viewBox="0 0 520 260">
-            <polyline points={buildLinePoints(tearLakeRecords)} />
+          <svg className="constellation-lines shared-tear-lines" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            <path d={buildSmoothLinePath(tearLakeRecords)} />
+            <g className="constellation-glow-points">
+              {buildGlowPoints(tearLakeRecords).map((point, index) => (
+                <circle key={`${point.x}-${point.y}-${index}`} cx={point.x} cy={point.y} r={point.radius} />
+              ))}
+            </g>
           </svg>
         </>
       ) : null}
@@ -28,8 +33,13 @@ export default function EmotionConstellationMap({ records }) {
           }}
         >
           <img src={group.image} alt="" />
-          <svg className="constellation-lines" viewBox="0 0 520 260">
-            <polyline points={group.linePoints} />
+          <svg className="constellation-lines" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            <path d={group.linePath} />
+            <g className="constellation-glow-points">
+              {group.glowPoints.map((point, pointIndex) => (
+                <circle key={`${point.x}-${point.y}-${pointIndex}`} cx={point.x} cy={point.y} r={point.radius} />
+              ))}
+            </g>
           </svg>
         </div>
       ))}

@@ -1,5 +1,17 @@
-export default function PaperNote({ record, isFolded = false, isThrowing = false, onFold, onThrow, onCancel }) {
+import { emotionConfig } from "../config/emotionConfig";
+
+export default function PaperNote({
+  record,
+  emotion,
+  targetStar,
+  isFolded = false,
+  isThrowing = false,
+  onFold,
+  onThrow,
+  onCancel
+}) {
   if (!record) return null;
+  const config = emotionConfig[emotion || record.emotion] || emotionConfig.calm;
 
   return (
     <aside className="paper-flow" aria-live="polite">
@@ -21,6 +33,17 @@ export default function PaperNote({ record, isFolded = false, isThrowing = false
         </div>
       ) : (
         <div className={isThrowing ? "paper-ball-scene is-throwing" : "paper-ball-scene"}>
+          {isThrowing && targetStar ? (
+            <span
+              className="paper-meteor-trail"
+              aria-hidden="true"
+              style={{
+                "--meteor-color": config.starColor,
+                "--meteor-target-x": `${targetStar.x}px`,
+                "--meteor-target-y": `${targetStar.y}px`
+              }}
+            />
+          ) : null}
           <img
             src="/assets/objects/paper_ball.png"
             alt="纸团"
