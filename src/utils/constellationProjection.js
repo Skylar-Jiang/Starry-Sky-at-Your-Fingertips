@@ -71,6 +71,10 @@ export function getConstellationLayoutById(skyBounds, viewportWidth, viewportHei
 }
 
 function normalizeLayoutBounds(layout, skyBounds, viewportWidth, viewportHeight) {
+  if (layout?.id) {
+    const matchingLayout = getConstellationLayoutById(skyBounds, viewportWidth, viewportHeight, layout.id);
+    if (matchingLayout) return matchingLayout;
+  }
   if (
     Number.isFinite(layout?.x) &&
     Number.isFinite(layout?.y) &&
@@ -78,10 +82,6 @@ function normalizeLayoutBounds(layout, skyBounds, viewportWidth, viewportHeight)
     Number.isFinite(layout?.height)
   ) {
     return layout;
-  }
-  if (layout?.id) {
-    const matchingLayout = getConstellationLayoutById(skyBounds, viewportWidth, viewportHeight, layout.id);
-    if (matchingLayout) return matchingLayout;
   }
   return getConstellationLayoutBounds(normalizeSkyBounds(skyBounds, viewportWidth, viewportHeight));
 }

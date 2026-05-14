@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import EmotionSelector from "./EmotionSelector";
 
 export default function DiaryModal({
@@ -6,8 +6,11 @@ export default function DiaryModal({
   text,
   emotion,
   error,
+  aiEmotionStatus = "idle",
+  aiEmotionMessage = "",
   onTextChange,
   onEmotionChange,
+  onDetectEmotion,
   onClose,
   onSubmit
 }) {
@@ -17,6 +20,8 @@ export default function DiaryModal({
     event.preventDefault();
     onSubmit();
   }
+
+  const isDetectingEmotion = aiEmotionStatus === "loading";
 
   return (
     <div className="modal-backdrop">
@@ -36,6 +41,23 @@ export default function DiaryModal({
               rows={8}
               autoFocus
             />
+
+            <div className={`ai-emotion-helper is-${aiEmotionStatus}`}>
+              <button
+                className="ai-emotion-button"
+                type="button"
+                onClick={onDetectEmotion}
+                disabled={isDetectingEmotion}
+              >
+                <Sparkles size={16} />
+                {isDetectingEmotion ? "小伙伴正在认真感受中…" : "让远方的小伙伴轻轻感受一下你的心情"}
+              </button>
+              {aiEmotionMessage ? (
+                <p className="ai-emotion-message" role="status" aria-live="polite">
+                  {aiEmotionMessage}
+                </p>
+              ) : null}
+            </div>
 
             <div className="paper-button-row paper-actions">
               <button className="paper-overlay-button" type="button" onClick={onClose}>

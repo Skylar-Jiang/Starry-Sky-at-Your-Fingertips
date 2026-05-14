@@ -1,5 +1,5 @@
 import { BookOpen, Hand, Sparkles, Telescope, Trash2, WandSparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { emotionConfig } from "../config/emotionConfig";
 import { getRecommendedAudioPreset } from "../config/audioConfig";
 import { getDefaultEnvironmentSceneKey } from "../config/sceneAssetConfig";
@@ -7,6 +7,7 @@ import { getEnvironmentComposition } from "../config/environmentCompositionConfi
 import { filterRecordsByDateRange, filterRecordsByEmotion } from "../utils/recordFilters";
 import { createStarPlacement } from "../utils/starPlacement";
 import { useAmbientAudio } from "../hooks/useAmbientAudio";
+import { useElementSize } from "../hooks/useElementSize";
 import BaseSkyLayer from "./BaseSkyLayer";
 import ConstellationView from "./ConstellationView";
 import EnvironmentPanel from "./EnvironmentPanel";
@@ -65,6 +66,8 @@ export default function MainScene({
   const [selectedEnvironmentSceneKey, setSelectedEnvironmentSceneKey] = useState(() =>
     getRequestedSceneKey() || getDefaultEnvironmentSceneKey(currentEmotion, getRecommendedAudioPreset(currentEmotion))
   );
+  const sceneCoordinateRef = useRef(null);
+  const sceneSize = useElementSize(sceneCoordinateRef);
   const ambientAudio = useAmbientAudio();
   const config = emotionConfig[currentEmotion] || emotionConfig.calm;
   const composition = getEnvironmentComposition(currentEmotion, selectedEnvironmentSceneKey);
@@ -95,8 +98,9 @@ export default function MainScene({
     setIsPendingRecordThrowing(true);
     onFlowPhaseChange("throwing");
 
-    const viewportWidth = typeof window === "undefined" ? 1200 : window.innerWidth;
-    const viewportHeight = typeof window === "undefined" ? 800 : window.innerHeight;
+    const sceneRect = sceneCoordinateRef.current?.getBoundingClientRect();
+    const viewportWidth = Math.round(sceneRect?.width || sceneSize.width);
+    const viewportHeight = Math.round(sceneRect?.height || sceneSize.height);
     const targetStar = createStarPlacement({
       viewportWidth,
       viewportHeight,
@@ -206,24 +210,34 @@ export default function MainScene({
               onSelectConstellation={onSelectConstellation}
             />
           ) : null}
-          {isObservingSky ? (
-            <ConstellationView
-              records={visibleStarredRecords}
-              onSelectStar={onSelectStar}
-              constellationKey={activeConstellationKey}
-              skyBounds={composition.skyBounds}
-            />
-          ) : (
-            <>
-              <PresetConstellationLayer
-                records={starredRecords}
-                mode="main"
+          <div className="scene-coordinate-space" ref={sceneCoordinateRef}>
+            {isObservingSky ? (
+              <ConstellationView
+                records={visibleStarredRecords}
+                onSelectStar={onSelectStar}
                 constellationKey={activeConstellationKey}
                 skyBounds={composition.skyBounds}
+                sceneSize={sceneSize}
               />
-              <StarLayer records={starredRecords} onSelectStar={onSelectStar} />
-            </>
-          )}
+            ) : (
+              <>
+                <PresetConstellationLayer
+                  records={starredRecords}
+                  mode="main"
+                  constellationKey={activeConstellationKey}
+                  skyBounds={composition.skyBounds}
+                  sceneSize={sceneSize}
+                />
+                <StarLayer
+                  records={starredRecords}
+                  onSelectStar={onSelectStar}
+                  sceneSize={sceneSize}
+                  skyBounds={composition.skyBounds}
+                  constellationKey={activeConstellationKey}
+                />
+              </>
+            )}
+          </div>
           <div className="constellation-hint">已保存 {records.length} 条记录</div>
         </div>
 

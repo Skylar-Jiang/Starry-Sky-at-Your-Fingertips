@@ -2,6 +2,7 @@ import { createStarId } from "./id";
 import { getConstellationByKey } from "../config/presetConstellationConfig";
 import { logConstellationProjection, projectConstellationNodes } from "./constellationProjection";
 import { chooseConstellationLayout } from "./constellationSelection";
+import { addStarRatios } from "./starCoordinates";
 
 const SAFE_AREA = {
   marginX: 120,
@@ -85,7 +86,7 @@ function createTemplateCandidate({ viewportWidth, viewportHeight, skyBounds, exi
 
   const selectedIndex = Math.min(availableNodes.length - 1, Math.floor(random() * availableNodes.length));
   const selectedNode = availableNodes[selectedIndex];
-  return {
+  return addStarRatios({
     id: createStarId(),
     x: selectedNode.x,
     y: selectedNode.y,
@@ -93,7 +94,7 @@ function createTemplateCandidate({ viewportWidth, viewportHeight, skyBounds, exi
     constellationNodeId: selectedNode.id,
     constellationIndex: selectedNode.index,
     constellationLayout
-  };
+  }, { width: viewportWidth, height: viewportHeight });
 }
 
 export function createStarPlacement({
@@ -145,13 +146,13 @@ export function createStarPlacement({
     }
 
     if (hasEnoughDistance(candidate, points, SAFE_AREA.minDistance)) {
-      return candidate;
+      return addStarRatios(candidate, { width, height });
     }
   }
 
-  return {
+  return addStarRatios({
     ...bestCandidate,
     x: clamp(bestCandidate.x, minX, maxX),
     y: clamp(bestCandidate.y, minY, maxY)
-  };
+  }, { width, height });
 }

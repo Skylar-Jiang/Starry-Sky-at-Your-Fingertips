@@ -1,7 +1,7 @@
 import PresetConstellationLayer from "./PresetConstellationLayer";
 import StarLayer from "./StarLayer";
 
-export default function ConstellationView({ records, onSelectStar, constellationKey, skyBounds }) {
+export default function ConstellationView({ records, onSelectStar, constellationKey, skyBounds, sceneSize }) {
   if (!records.length) {
     return (
       <section className="constellation-view" role="region" aria-label="观测星空">
@@ -17,8 +17,15 @@ export default function ConstellationView({ records, onSelectStar, constellation
         mode="observation"
         constellationKey={constellationKey}
         skyBounds={skyBounds}
+        sceneSize={sceneSize}
       />
-      <StarLayer records={records} onSelectStar={onSelectStar} />
+      <StarLayer
+        records={records}
+        onSelectStar={onSelectStar}
+        sceneSize={sceneSize}
+        skyBounds={skyBounds}
+        constellationKey={constellationKey}
+      />
     </section>
   );
 }

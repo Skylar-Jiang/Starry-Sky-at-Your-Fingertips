@@ -4,6 +4,7 @@ import {
   logConstellationProjection,
   projectConstellationNodes
 } from "../utils/constellationProjection";
+import { resolveSceneSize } from "../utils/starCoordinates";
 
 function getViewportSize() {
   if (typeof window === "undefined") return { width: 1200, height: 800 };
@@ -33,10 +34,11 @@ export default function PresetConstellationLayer({
   records = [],
   mode = "main",
   constellationKey,
-  skyBounds
+  skyBounds,
+  sceneSize
 }) {
   const activeConstellation = getConstellationByKey(constellationKey);
-  const { width, height } = getViewportSize();
+  const { width, height } = sceneSize ? resolveSceneSize(sceneSize) : getViewportSize();
   const visibleGroups = groupRecordsByConstellation(records, activeConstellation.key)
     .map(({ constellation, records: litRecords }) => {
       const isCompleted = litRecords.length >= constellation.requiredStarCount;

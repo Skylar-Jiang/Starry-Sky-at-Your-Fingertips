@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vitest";
 import { getConstellationByKey } from "../config/presetConstellationConfig";
-import { getBoxOverlapArea, getProjectedNodeBounds, projectConstellationNodes } from "../utils/constellationProjection";
+import {
+  getBoxOverlapArea,
+  getConstellationLayoutCandidates,
+  getProjectedNodeBounds,
+  projectConstellationNodes
+} from "../utils/constellationProjection";
 import { createStarPlacement } from "../utils/starPlacement";
 
 describe("constellation star placement", () => {
@@ -126,5 +131,16 @@ describe("constellation star placement", () => {
     });
 
     expect(secondGemini.constellationLayout).toEqual(firstGemini.constellationLayout);
+  });
+
+  test("reprojects a stored layout id against the resized scene instead of freezing old pixels", () => {
+    const oldLayout = getConstellationLayoutCandidates(null, 1200, 800)[0];
+    const storedLayout = { ...oldLayout };
+    const resizedNodes = projectConstellationNodes(getConstellationByKey("aries"), null, 2000, 1000, storedLayout);
+    const expectedNodes = projectConstellationNodes(getConstellationByKey("aries"), null, 2000, 1000, {
+      id: oldLayout.id
+    });
+
+    expect(resizedNodes).toEqual(expectedNodes);
   });
 });

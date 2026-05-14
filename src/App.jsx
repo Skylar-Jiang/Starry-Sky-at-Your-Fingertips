@@ -13,8 +13,14 @@ import {
   zodiacConstellations
 } from "./config/presetConstellationConfig";
 import { emotionOptionKeys } from "./config/emotionConfig";
+import { hasEnoughLetterContent } from "./utils/letterContent";
 
 const visualEmotionKeys = new Set(emotionOptionKeys);
+const selectableEmotionKeys = new Set(emotionOptionKeys);
+
+const AI_SHORT_LETTER_MESSAGE = "再和小伙伴多说一点吧，它还没有听清你的心声。";
+const AI_UNCERTAIN_MESSAGE = "小伙伴还没有完全听清你的心声，再和它多说说你的想法吧。";
+const AI_ERROR_MESSAGE = "小伙伴现在有点听不清，稍后再试一次吧。";
 
 function getRequestedEmotion() {
   if (typeof window === "undefined") return "";
@@ -78,6 +84,8 @@ export default function App() {
   const [diaryText, setDiaryText] = useState("");
   const [diaryEmotion, setDiaryEmotion] = useState("calm");
   const [diaryError, setDiaryError] = useState("");
+  const [aiEmotionStatus, setAiEmotionStatus] = useState("idle");
+  const [aiEmotionMessage, setAiEmotionMessage] = useState("");
   const [pendingRecord, setPendingRecord] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
@@ -131,6 +139,8 @@ export default function App() {
     setRecentCompletedEmotion("");
     setRecentCompletedStar(null);
     setDiaryError("");
+    setAiEmotionStatus("idle");
+    setAiEmotionMessage("");
     setIsDiaryOpen(true);
     setFlowPhase("writing");
   }
@@ -140,7 +150,55 @@ export default function App() {
     setDiaryText("");
     setDiaryEmotion("calm");
     setDiaryError("");
+    setAiEmotionStatus("idle");
+    setAiEmotionMessage("");
     if (!pendingRecord) setFlowPhase(currentEmotion === "calm" ? "calm" : "idle");
+  }
+
+  async function handleDetectDiaryEmotion() {
+    const trimmedText = diaryText.trim();
+
+    if (!hasEnoughLetterContent(trimmedText)) {
+      setAiEmotionStatus("uncertain");
+      setAiEmotionMessage(AI_SHORT_LETTER_MESSAGE);
+      return;
+    }
+
+    setAiEmotionStatus("loading");
+    setAiEmotionMessage("");
+
+    try {
+      const response = await fetch("/api/detect-emotion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ letterContent: trimmedText })
+      });
+
+      if (!response.ok) {
+        throw new Error(`detect emotion failed with ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data?.status === "ok" && selectableEmotionKeys.has(data.emotion)) {
+        setDiaryEmotion(data.emotion);
+        setAiEmotionStatus("success");
+        setAiEmotionMessage(data.message || AI_UNCERTAIN_MESSAGE);
+        return;
+      }
+
+      if (data?.status === "uncertain") {
+        setAiEmotionStatus("uncertain");
+        setAiEmotionMessage(data.message || AI_UNCERTAIN_MESSAGE);
+        return;
+      }
+
+      throw new Error("Unexpected detect emotion response");
+    } catch (error) {
+      console.error(error);
+      setAiEmotionStatus("error");
+      setAiEmotionMessage(AI_ERROR_MESSAGE);
+    }
   }
 
   function handleCreateRecord(data = { text: diaryText, emotion: diaryEmotion }) {
@@ -161,6 +219,8 @@ export default function App() {
     setDiaryText("");
     setDiaryEmotion("calm");
     setDiaryError("");
+    setAiEmotionStatus("idle");
+    setAiEmotionMessage("");
     setFlowPhase("paperReady");
     return true;
   }
@@ -256,6 +316,8 @@ export default function App() {
     setDiaryText("");
     setDiaryEmotion("calm");
     setDiaryError("");
+    setAiEmotionStatus("idle");
+    setAiEmotionMessage("");
     setFlowPhase("idle");
     setActiveConstellationKey(getRandomConstellationKey());
     setIsManualConstellation(false);
@@ -359,11 +421,18 @@ export default function App() {
         text={diaryText}
         emotion={diaryEmotion}
         error={diaryError}
+        aiEmotionStatus={aiEmotionStatus}
+        aiEmotionMessage={aiEmotionMessage}
         onTextChange={(value) => {
           setDiaryText(value);
           if (diaryError) setDiaryError("");
+          if (aiEmotionStatus !== "idle") {
+            setAiEmotionStatus("idle");
+            setAiEmotionMessage("");
+          }
         }}
         onEmotionChange={setDiaryEmotion}
+        onDetectEmotion={handleDetectDiaryEmotion}
         onClose={handleCloseDiary}
         onSubmit={handleCreateRecord}
       />

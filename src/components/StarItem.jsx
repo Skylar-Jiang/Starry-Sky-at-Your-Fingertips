@@ -1,10 +1,24 @@
 import { emotionConfig, getEmotionLabel } from "../config/emotionConfig";
+import { resolveStarRenderPosition } from "../utils/starCoordinates";
 
-export default function StarItem({ record, onClick }) {
+export default function StarItem({
+  record,
+  onClick,
+  sceneSize,
+  skyBounds,
+  constellationKey,
+  legacyRatioCache
+}) {
   const config = emotionConfig[record.emotion] || emotionConfig.calm;
+  const position = resolveStarRenderPosition(record.star, {
+    ...sceneSize,
+    skyBounds,
+    constellationKey,
+    legacyRatioCache
+  });
   const style = {
-    left: `${record.star.x}px`,
-    top: `${record.star.y}px`,
+    left: `${position.xRatio * 100}%`,
+    top: `${position.yRatio * 100}%`,
     "--star-color": config.starColor
   };
 

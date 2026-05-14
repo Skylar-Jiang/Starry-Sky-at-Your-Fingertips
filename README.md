@@ -23,6 +23,20 @@ npm install
 npm run dev
 ```
 
+AI 情绪感知接口在本地 Vite 服务的 `/api/detect-emotion` 上运行。OpenRouter key 只放在后端环境变量里，不要写进前端代码：
+
+```bash
+copy .env.example .env
+```
+
+然后在 `.env` 里填写：
+
+```text
+OPENROUTER_API_KEY=你的 OpenRouter key
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=qwen/qwen3-235b-a22b-2507
+```
+
 验证命令：
 
 ```bash

@@ -11,6 +11,8 @@ import { projectConstellationNodes } from "../utils/constellationProjection";
 
 vi.setConfig({ testTimeout: 20000 });
 
+const originalFetch = globalThis.fetch;
+
 describe("指尖星空演示闭环", () => {
   function mockCameraStream() {
     const stop = vi.fn();
@@ -42,6 +44,7 @@ describe("指尖星空演示闭环", () => {
 
   afterEach(() => {
     cleanup();
+    globalThis.fetch = originalFetch;
   });
 
   test("用户记录情绪后生成完整 record，并通过投掷回写 star 后可点击回看", async () => {
@@ -223,6 +226,78 @@ describe("指尖星空演示闭环", () => {
     expect(within(dialog).getByText("非常难过")).toBeInTheDocument();
     expect(within(dialog).getByText(/场景正在慢慢恢复平静/)).toBeInTheDocument();
   }, 10000);
+
+  test("AI 可以辅助感知情绪，成功后选中对应情绪且用户仍可手动修改", async () => {
+    const user = userEvent.setup();
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "ok",
+        emotion: "happy",
+        confidence: 0.86,
+        message: "小伙伴感觉到了，你的这封信里藏着一点「开心」。"
+      })
+    });
+    globalThis.fetch = fetchSpy;
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "今天收到了很温柔的回应，心里亮了一小片星光。");
+    await user.click(screen.getByRole("button", { name: /让远方的小伙伴轻轻感受一下你的心情/ }));
+
+    await waitFor(() => {
+      expect(screen.getByText("小伙伴感觉到了，你的这封信里藏着一点「开心」。")).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "开心" })).toHaveAttribute("aria-pressed", "true");
+
+    await user.click(screen.getByRole("button", { name: "非常难过" }));
+    expect(screen.getByRole("button", { name: "非常难过" })).toHaveAttribute("aria-pressed", "true");
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "/api/detect-emotion",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ letterContent: "今天收到了很温柔的回应，心里亮了一小片星光。" })
+      })
+    );
+  });
+
+  test("信太短时 AI 不请求接口并给出温柔提示", async () => {
+    const user = userEvent.setup();
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy;
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "还好");
+    await user.click(screen.getByRole("button", { name: /让远方的小伙伴轻轻感受一下你的心情/ }));
+
+    expect(screen.getByText("再和小伙伴多说一点吧，它还没有听清你的心声。")).toBeInTheDocument();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  test("英文长信也会进入 AI 感知流程", async () => {
+    const user = userEvent.setup();
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "uncertain",
+        emotion: null,
+        confidence: 0.42,
+        message: "小伙伴还没有完全听清你的心声，再和它多说说你的想法吧。"
+      })
+    });
+    globalThis.fetch = fetchSpy;
+
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "记录情绪" }));
+    await user.type(screen.getByLabelText("想交给星空的话"), "I feel quietly relieved after a long and difficult day.");
+    await user.click(screen.getByRole("button", { name: /让远方的小伙伴轻轻感受一下你的心情/ }));
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalled();
+    });
+  });
 
   test("投掷后主场景显示当前情绪对应的狐狸和玫瑰素材", async () => {
     const user = userEvent.setup();
