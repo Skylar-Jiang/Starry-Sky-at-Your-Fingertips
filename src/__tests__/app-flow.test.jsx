@@ -264,7 +264,10 @@ describe("指尖星空演示闭环", () => {
 
   test("信太短时 AI 不请求接口并给出温柔提示", async () => {
     const user = userEvent.setup();
-    const fetchSpy = vi.fn();
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ status: "ok", stars: [] })
+    });
     globalThis.fetch = fetchSpy;
 
     render(<App />);
@@ -273,7 +276,7 @@ describe("指尖星空演示闭环", () => {
     await user.click(screen.getByRole("button", { name: /让远方的小伙伴轻轻感受一下你的心情/ }));
 
     expect(screen.getByText("再和小伙伴多说一点吧，它还没有听清你的心声。")).toBeInTheDocument();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalledWith("/api/detect-emotion", expect.anything());
   });
 
   test("英文长信也会进入 AI 感知流程", async () => {
@@ -502,9 +505,16 @@ describe("指尖星空演示闭环", () => {
       await user.click(button);
     }
 
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
+    await waitFor(() => {
+      expect(document.querySelector(".drift-publish-prompt")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "只是自己留着" }));
+
     await waitFor(
       () => {
-        expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
         expect(container.querySelector(".foreground-scene-lullaby .scene-emotion-group")).toHaveAttribute(
           "src",
           expect.stringContaining("/assets/scene-layers/emotion-groups/calm_group.png")
@@ -717,8 +727,15 @@ describe("指尖星空演示闭环", () => {
 
     await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
 
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
     await waitFor(() => {
-      expect(document.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
+      expect(document.querySelector(".drift-publish-prompt")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "只是自己留着" }));
+
+    await waitFor(() => {
       expect(document.querySelector(".foreground-scene-lullaby .scene-foreground-stage")).toBeInTheDocument();
     });
   });
@@ -755,9 +772,16 @@ describe("指尖星空演示闭环", () => {
       expect(screen.getByText("这颗星星已经被你安放好了。")).toBeInTheDocument();
     });
 
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
+    await waitFor(() => {
+      expect(document.querySelector(".drift-publish-prompt")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "只是自己留着" }));
+
     await waitFor(
       () => {
-        expect(container.querySelector(".recovery-interaction-layer")).not.toBeInTheDocument();
         expect(container.querySelector('.scene-emotion-group[src*="calm_group.png"]')).toBeInTheDocument();
       },
       { timeout: 2200 }

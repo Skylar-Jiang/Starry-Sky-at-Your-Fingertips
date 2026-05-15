@@ -1,4 +1,4 @@
-import { BookOpen, Hand, Sparkles, Telescope, Trash2, WandSparkles } from "lucide-react";
+import { BookOpen, Hand, Music, Sparkles, Telescope, Trash2, WandSparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { emotionConfig } from "../config/emotionConfig";
 import { getRecommendedAudioPreset } from "../config/audioConfig";
@@ -20,6 +20,7 @@ import SceneCharacterLayer from "./SceneCharacterLayer";
 import SceneEffectLayer from "./SceneEffectLayer";
 import SceneEnvironmentLayer from "./SceneEnvironmentLayer";
 import StarLayer from "./StarLayer";
+import DriftStarLayer from "./DriftStarLayer";
 
 const visualSceneKeys = new Set(["rain", "campfire", "waves", "lullaby"]);
 
@@ -44,6 +45,8 @@ export default function MainScene({
   isManualConstellation = false,
   recentCompletedEmotion,
   recentCompletedStar,
+  driftingStars = [],
+  isDriftLoading = false,
   onOpenDiary,
   onSubmitDiary,
   onFlowPhaseChange,
@@ -53,7 +56,13 @@ export default function MainScene({
   onSelectStar,
   onClearRecords,
   onInjectDemoData,
-  onSelectConstellation
+  onSelectConstellation,
+  onSelectDriftStar,
+  onPublishAsDrift,
+  isPublishingDrift = false,
+  driftPublishError = "",
+  showDriftPublishPrompt = false,
+  onDismissDriftPrompt
 }) {
   const [isObservingSky, setIsObservingSky] = useState(getRequestedObserveState);
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
@@ -67,6 +76,8 @@ export default function MainScene({
     getRequestedSceneKey() || getDefaultEnvironmentSceneKey(currentEmotion, getRecommendedAudioPreset(currentEmotion))
   );
   const sceneCoordinateRef = useRef(null);
+  const bgMusicRef = useRef(null);
+  const [isBgMusicPlaying, setIsBgMusicPlaying] = useState(false);
   const sceneSize = useElementSize(sceneCoordinateRef);
   const ambientAudio = useAmbientAudio();
   const config = emotionConfig[currentEmotion] || emotionConfig.calm;
@@ -150,6 +161,17 @@ export default function MainScene({
     handleFoldPendingRecord();
   }
 
+  function toggleBgMusic() {
+    if (!bgMusicRef.current) return;
+    if (isBgMusicPlaying) {
+      bgMusicRef.current.pause();
+      setIsBgMusicPlaying(false);
+    } else {
+      bgMusicRef.current.play().catch(() => {});
+      setIsBgMusicPlaying(true);
+    }
+  }
+
   const isRecoveryActive = flowPhase === "recoveryPrompt";
 
   return (
@@ -164,6 +186,7 @@ export default function MainScene({
       <SceneEnvironmentLayer composition={composition} />
       <SceneEffectLayer emotion={currentEmotion} composition={composition} />
       <div className="scene-overlay" aria-hidden="true" />
+      <audio ref={bgMusicRef} src="/assets/bgm.mp4" loop preload="auto" />
 
       <section className="scene-content" aria-label="指尖星空主界面">
         <div className="ui-layer scene-header">
@@ -172,12 +195,31 @@ export default function MainScene({
             <h1>指尖星空</h1>
           </div>
           <div className="header-actions">
+            <button
+              className={`icon-text-button ${isBgMusicPlaying ? "is-active" : ""}`}
+              type="button"
+              onClick={toggleBgMusic}
+              aria-label={isBgMusicPlaying ? "暂停背景音乐" : "播放背景音乐"}
+            >
+              <Music size={17} />
+              {isBgMusicPlaying ? "暂停" : "播放"}
+            </button>
             <button className="icon-text-button" type="button" onClick={onClearRecords}>
               <Trash2 size={17} />
               清空测试数据
             </button>
             <button className="demo-seed-button" type="button" onClick={onInjectDemoData} aria-label="注入演示数据">
               <span aria-hidden="true">•</span>
+            </button>
+            <button
+              className="icon-text-button"
+              type="button"
+              onClick={() => onSelectDriftStar(driftingStars[0] || null)}
+              aria-label="查看漂流星星"
+              disabled={isDriftLoading || driftingStars.length === 0}
+            >
+              <Sparkles size={17} />
+              漂流瓶 {driftingStars.length > 0 ? `(${driftingStars.length})` : ""}
             </button>
             <button className="icon-text-button" type="button" onClick={() => setIsGestureOpen(true)} aria-label="手势实验">
               <Hand size={17} />
@@ -191,12 +233,45 @@ export default function MainScene({
         </div>
 
         <div className="constellation-layer sky-region">
-          <RecoveryInteractionLayer
-            emotion={recentCompletedEmotion}
-            active={isRecoveryActive}
-            targetStar={recentCompletedStar}
-            onComplete={onRecoveryComplete}
-          />
+          {!showDriftPublishPrompt && (
+            <RecoveryInteractionLayer
+              emotion={recentCompletedEmotion}
+              active={isRecoveryActive}
+              targetStar={recentCompletedStar}
+              onComplete={onRecoveryComplete}
+            />
+          )}
+          {showDriftPublishPrompt && (
+            <div className="drift-publish-prompt" role="dialog" aria-label="发布漂流瓶">
+              <div className="drift-publish-card">
+                <Sparkles size={28} />
+                <h3>要把这份心情交给远方的小伙伴吗？</h3>
+                <p>你的心情会变成一颗漂流瓶，漂向别人的夜空。</p>
+                {driftPublishError && (
+                  <p className="drift-publish-error">{driftPublishError}</p>
+                )}
+                <div className="drift-publish-actions">
+                  <button
+                    className="secondary-button"
+                    type="button"
+                    onClick={onDismissDriftPrompt}
+                    disabled={isPublishingDrift}
+                  >
+                    只是自己留着
+                  </button>
+                  <button
+                    className="primary-button"
+                    type="button"
+                    onClick={() => onPublishAsDrift(null)}
+                    disabled={isPublishingDrift}
+                  >
+                    <Sparkles size={16} />
+                    {isPublishingDrift ? "发布中..." : "发布到漂流瓶"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {isObservingSky ? (
             <ObservationPanel
               totalCount={starredRecords.length}
@@ -234,6 +309,12 @@ export default function MainScene({
                   sceneSize={sceneSize}
                   skyBounds={composition.skyBounds}
                   constellationKey={activeConstellationKey}
+                />
+                <DriftStarLayer
+                  driftingStars={driftingStars}
+                  onSelectStar={onSelectDriftStar}
+                  sceneSize={sceneSize}
+                  skyBounds={composition.skyBounds}
                 />
               </>
             )}

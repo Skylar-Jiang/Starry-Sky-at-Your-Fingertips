@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import MainScene from "./components/MainScene";
 import DiaryModal from "./components/DiaryModal";
 import StarDetailModal from "./components/StarDetailModal";
+import DriftStarDetailModal from "./components/DriftStarDetailModal";
 import { createEmotionRecord } from "./utils/record";
 import { clearRecords, loadRecords, saveRecords } from "./utils/storage";
+import { loadCachedDriftStars, saveCachedDriftStars, clearDriftCache } from "./utils/driftStorage";
 import { chooseNextConstellationKey } from "./utils/constellationSelection";
 import { projectConstellationNodes } from "./utils/constellationProjection";
 import { getEnvironmentComposition } from "./config/environmentCompositionConfig";
@@ -88,6 +90,12 @@ export default function App() {
   const [aiEmotionMessage, setAiEmotionMessage] = useState("");
   const [pendingRecord, setPendingRecord] = useState(null);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [driftingStars, setDriftingStars] = useState([]);
+  const [selectedDriftStar, setSelectedDriftStar] = useState(null);
+  const [isDriftLoading, setIsDriftLoading] = useState(false);
+  const [isPublishingDrift, setIsPublishingDrift] = useState(false);
+  const [driftPublishError, setDriftPublishError] = useState("");
+  const [showDriftPublishPrompt, setShowDriftPublishPrompt] = useState(false);
   const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
   const [recentCompletedStar, setRecentCompletedStar] = useState(null);
   const [activeConstellationKey, setActiveConstellationKey] = useState(
@@ -129,6 +137,219 @@ export default function App() {
       setCurrentEmotion(latestStarred.emotion);
     }
   }, []);
+
+  useEffect(() => {
+    const cached = loadCachedDriftStars();
+    if (cached && cached.length > 0) {
+      setDriftingStars(cached);
+      return;
+    }
+    handleLoadDriftingStars();
+  }, []);
+
+  function buildMockDriftingStars() {
+    return [
+      {
+        id: "mock_drift_1",
+        text: "今天考完试了，感觉整个人都轻飘飘的，像云一样。",
+        emotion: "calm",
+        author_id: "traveler_a",
+        constellation_key: "libra",
+        star_x: 0.18,
+        star_y: 0.22,
+        drift_count: 3,
+        is_public: true,
+        created_at: "2026-05-13 19:30:00"
+      },
+      {
+        id: "mock_drift_2",
+        text: "和朋友吵了一架，现在有点难过，但也许明天就好了吧。",
+        emotion: "sad",
+        author_id: "traveler_b",
+        constellation_key: "cancer",
+        star_x: 0.62,
+        star_y: 0.15,
+        drift_count: 7,
+        is_public: true,
+        created_at: "2026-05-12 21:15:00"
+      },
+      {
+        id: "mock_drift_3",
+        text: "被老师表扬啦！今天的心情像星星一样亮闪闪的。",
+        emotion: "happy",
+        author_id: "traveler_c",
+        constellation_key: "leo",
+        star_x: 0.35,
+        star_y: 0.55,
+        drift_count: 12,
+        is_public: true,
+        created_at: "2026-05-11 17:45:00"
+      },
+      {
+        id: "mock_drift_4",
+        text: "明天要演讲，脑子里全是泡泡一样的担心……先把它写下来。",
+        emotion: "anxious",
+        author_id: "traveler_d",
+        constellation_key: "gemini",
+        star_x: 0.78,
+        star_y: 0.38,
+        drift_count: 2,
+        is_public: true,
+        created_at: "2026-05-13 14:20:00"
+      },
+      {
+        id: "mock_drift_5",
+        text: "有些话不知道该跟谁说，就交给这片星空吧。",
+        emotion: "wronged",
+        author_id: "traveler_e",
+        constellation_key: "pisces",
+        star_x: 0.50,
+        star_y: 0.70,
+        drift_count: 5,
+        is_public: true,
+        created_at: "2026-05-10 23:10:00"
+      }
+    ];
+  }
+
+  async function handleLoadDriftingStars() {
+    setIsDriftLoading(true);
+    try {
+      const response = await fetch("/api/drifting-stars?limit=5");
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.status === "ok" && Array.isArray(data.stars) && data.stars.length > 0) {
+          setDriftingStars(data.stars);
+          saveCachedDriftStars(data.stars);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("[drift-stars] load failed:", error);
+    }
+    const mockStars = buildMockDriftingStars();
+    setDriftingStars(mockStars);
+    saveCachedDriftStars(mockStars);
+    setIsDriftLoading(false);
+  }
+
+  function handleSelectDriftStar(star) {
+    setSelectedDriftStar(star);
+  }
+
+  function handleCloseDriftStar() {
+    setSelectedDriftStar(null);
+  }
+
+  async function handlePickupDriftStar(starId) {
+    if (starId.startsWith("mock_")) {
+      setDriftingStars((prev) => prev.filter((s) => s.id !== starId));
+      setSelectedDriftStar(null);
+      return null;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const response = await fetch(`/api/drifting-stars/${starId}/pickup`, {
+        method: "PATCH",
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        return { error: data.message || "送出失败了" };
+      }
+
+      setDriftingStars((prev) => prev.filter((s) => s.id !== starId));
+      setSelectedDriftStar(null);
+      handleLoadDriftingStars();
+      return null;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === "AbortError") {
+        return { error: "送出太慢了，网络可能有问题" };
+      }
+      console.error("[drift-stars] pickup failed:", error);
+      return { error: "送出失败了，稍后再试吧" };
+    }
+  }
+
+  async function handlePublishAsDrift(recordId) {
+    setIsPublishingDrift(true);
+    setDriftPublishError("");
+
+    const targetRecord = recordId ? records.find((r) => r.id === recordId) : null;
+    const starToPublish = targetRecord?.star || recentCompletedStar;
+    const emotionToPublish = targetRecord?.emotion || recentCompletedEmotion;
+    const textToPublish = targetRecord?.text || "";
+
+    if (!starToPublish) {
+      setIsPublishingDrift(false);
+      return { error: "没有可发布的星星" };
+    }
+
+    const mockStar = {
+      id: `mock_drift_${Date.now()}`,
+      text: textToPublish || "来自指尖星空的心情碎片",
+      emotion: emotionToPublish || "calm",
+      constellationKey: starToPublish.constellationKey,
+      starX: starToPublish.x,
+      starY: starToPublish.y,
+      drift_count: 0,
+      is_public: true,
+      created_at: new Date().toISOString().replace("T", " ").slice(0, 19)
+    };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const response = await fetch("/api/drifting-stars", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: textToPublish || "来自指尖星空的心情碎片",
+          emotion: emotionToPublish || "calm",
+          constellationKey: starToPublish.constellationKey,
+          starX: starToPublish.x,
+          starY: starToPublish.y
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        if (data.message === "漂流服务暂未配置") {
+          setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+          handleDismissDriftPrompt();
+          return null;
+        }
+        setIsPublishingDrift(false);
+        return { error: data.message || "发布失败了" };
+      }
+
+      handleLoadDriftingStars();
+      handleDismissDriftPrompt();
+      return null;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === "AbortError") {
+        setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+        handleDismissDriftPrompt();
+        return null;
+      }
+      console.error("[drift-stars] publish failed:", error);
+      setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+      handleDismissDriftPrompt();
+      return null;
+    } finally {
+      setIsPublishingDrift(false);
+    }
+  }
 
   const starredRecords = useMemo(
     () => records.filter((record) => !record.deleted && record.star),
@@ -271,6 +492,12 @@ export default function App() {
   }
 
   function handleRecoveryComplete() {
+    setShowDriftPublishPrompt(true);
+  }
+
+  function handleDismissDriftPrompt() {
+    setShowDriftPublishPrompt(false);
+    setDriftPublishError("");
     setCurrentEmotion("calm");
     setRecentCompletedEmotion("");
     setRecentCompletedStar(null);
@@ -404,6 +631,8 @@ export default function App() {
         isManualConstellation={isManualConstellation}
         recentCompletedEmotion={recentCompletedEmotion}
         recentCompletedStar={recentCompletedStar}
+        driftingStars={driftingStars}
+        isDriftLoading={isDriftLoading}
         onOpenDiary={handleOpenDiary}
         onSubmitDiary={handleCreateRecord}
         onFlowPhaseChange={setFlowPhase}
@@ -414,6 +643,12 @@ export default function App() {
         onClearRecords={handleClearRecords}
         onInjectDemoData={handleInjectDemoData}
         onSelectConstellation={handleSelectConstellation}
+        onSelectDriftStar={handleSelectDriftStar}
+        onPublishAsDrift={handlePublishAsDrift}
+        isPublishingDrift={isPublishingDrift}
+        driftPublishError={driftPublishError}
+        showDriftPublishPrompt={showDriftPublishPrompt}
+        onDismissDriftPrompt={handleDismissDriftPrompt}
       />
 
       <DiaryModal
@@ -442,6 +677,12 @@ export default function App() {
         onClose={handleCloseStarDetail}
         onToggleFavorite={handleToggleFavorite}
         onDelete={handleDeleteRecord}
+      />
+
+      <DriftStarDetailModal
+        star={selectedDriftStar}
+        onClose={handleCloseDriftStar}
+        onPickup={handlePickupDriftStar}
       />
     </>
   );
