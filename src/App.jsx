@@ -95,6 +95,7 @@ export default function App() {
   const [isDriftLoading, setIsDriftLoading] = useState(false);
   const [isPublishingDrift, setIsPublishingDrift] = useState(false);
   const [driftPublishError, setDriftPublishError] = useState("");
+  const [driftPublishFeedback, setDriftPublishFeedback] = useState(null);
   const [showDriftPublishPrompt, setShowDriftPublishPrompt] = useState(false);
   const [recentCompletedEmotion, setRecentCompletedEmotion] = useState("");
   const [recentCompletedStar, setRecentCompletedStar] = useState(null);
@@ -146,6 +147,12 @@ export default function App() {
     }
     handleLoadDriftingStars();
   }, []);
+
+  useEffect(() => {
+    if (!driftPublishFeedback) return undefined;
+    const timeoutId = setTimeout(() => setDriftPublishFeedback(null), 4500);
+    return () => clearTimeout(timeoutId);
+  }, [driftPublishFeedback]);
 
   function buildMockDriftingStars() {
     return [
@@ -277,9 +284,54 @@ export default function App() {
     }
   }
 
+  async function handleRemoveDriftStar(starId) {
+    const removeLocally = () => {
+      setDriftingStars((prev) => {
+        const nextStars = prev.filter((s) => s.id !== starId);
+        saveCachedDriftStars(nextStars);
+        return nextStars;
+      });
+      setSelectedDriftStar(null);
+    };
+
+    if (String(starId).startsWith("mock_")) {
+      removeLocally();
+      return null;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const response = await fetch(`/api/drifting-stars/${starId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ authorId: "anonymous" }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        removeLocally();
+        return null;
+      }
+
+      removeLocally();
+      return null;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name !== "AbortError") {
+        console.error("[drift-stars] remove failed:", error);
+      }
+      removeLocally();
+      return null;
+    }
+  }
+
   async function handlePublishAsDrift(recordId) {
     setIsPublishingDrift(true);
     setDriftPublishError("");
+    setDriftPublishFeedback(null);
 
     const targetRecord = recordId ? records.find((r) => r.id === recordId) : null;
     const starToPublish = targetRecord?.star || recentCompletedStar;
@@ -308,6 +360,24 @@ export default function App() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
+    function addSentDriftFeedback(star, source = "remote") {
+      const sentStar = {
+        ...star,
+        sourceType: "sentDrift",
+        driftDirection: "sent"
+      };
+      setDriftingStars((prev) => {
+        const nextStars = [sentStar, ...prev.filter((item) => item.id !== sentStar.id)].slice(0, 10);
+        saveCachedDriftStars(nextStars);
+        return nextStars;
+      });
+      setDriftPublishFeedback({
+        source,
+        text: sentStar.text,
+        emotion: sentStar.emotion
+      });
+    }
+
     try {
       const response = await fetch("/api/drifting-stars", {
         method: "POST",
@@ -326,7 +396,7 @@ export default function App() {
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         if (data.message === "漂流服务暂未配置") {
-          setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+          addSentDriftFeedback(mockStar, "local");
           handleDismissDriftPrompt();
           return null;
         }
@@ -334,18 +404,19 @@ export default function App() {
         return { error: data.message || "发布失败了" };
       }
 
-      handleLoadDriftingStars();
+      const data = await response.json().catch(() => ({}));
+      addSentDriftFeedback(data.star || mockStar);
       handleDismissDriftPrompt();
       return null;
     } catch (error) {
       clearTimeout(timeoutId);
       if (error.name === "AbortError") {
-        setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+        addSentDriftFeedback(mockStar, "local");
         handleDismissDriftPrompt();
         return null;
       }
       console.error("[drift-stars] publish failed:", error);
-      setDriftingStars((prev) => [mockStar, ...prev.slice(0, 9)]);
+      addSentDriftFeedback(mockStar, "local");
       handleDismissDriftPrompt();
       return null;
     } finally {
@@ -649,6 +720,7 @@ export default function App() {
         onPublishAsDrift={handlePublishAsDrift}
         isPublishingDrift={isPublishingDrift}
         driftPublishError={driftPublishError}
+        driftPublishFeedback={driftPublishFeedback}
         showDriftPublishPrompt={showDriftPublishPrompt}
         onDismissDriftPrompt={handleDismissDriftPrompt}
       />
@@ -685,6 +757,7 @@ export default function App() {
         star={selectedDriftStar}
         onClose={handleCloseDriftStar}
         onPickup={handlePickupDriftStar}
+        onRemove={handleRemoveDriftStar}
       />
     </>
   );

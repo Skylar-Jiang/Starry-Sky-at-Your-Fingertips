@@ -2,7 +2,8 @@ import {
   fetchRandomDriftingStars,
   publishDriftingStar,
   pickupDriftingStar,
-  removeDriftingStar
+  removeDriftingStar,
+  generateDriftingStarReply
 } from "./driftStarService.js";
 
 export function driftStarApiPlugin(env = process.env) {
@@ -18,12 +19,18 @@ export function driftStarApiPlugin(env = process.env) {
           return;
         }
 
-        if (req.method === "GET") {
+        if (pathname === "/api/drifting-stars" && req.method === "GET") {
           await handleGetDriftingStars(urlObj, res, env);
           return;
         }
 
-        if (req.method === "POST") {
+        const replyMatch = pathname.match(/^\/api\/drifting-stars\/([^/]+)\/reply$/);
+        if (replyMatch && req.method === "POST") {
+          await handleGenerateDriftingStarReply(req, res, env);
+          return;
+        }
+
+        if (pathname === "/api/drifting-stars" && req.method === "POST") {
           await handlePostDriftingStar(req, res, env);
           return;
         }
@@ -65,6 +72,17 @@ async function handlePostDriftingStar(req, res, env) {
   } catch (error) {
     console.error("[drift-star-api] POST error:", error);
     sendJson(res, 500, { status: "error", star: null, message: "发布失败，请稍后再试" });
+  }
+}
+
+async function handleGenerateDriftingStarReply(req, res, env) {
+  try {
+    const body = await readJsonBody(req);
+    const result = await generateDriftingStarReply(body, env);
+    sendJson(res, result.status === "ok" ? 200 : 400, result);
+  } catch (error) {
+    console.error("[drift-star-api] REPLY error:", error);
+    sendJson(res, 500, { status: "error", reply: "", message: "回信失败，请稍后再试" });
   }
 }
 

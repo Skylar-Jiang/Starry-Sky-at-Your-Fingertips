@@ -74,6 +74,7 @@ export default function MainScene({
   onPublishAsDrift,
   isPublishingDrift = false,
   driftPublishError = "",
+  driftPublishFeedback = null,
   showDriftPublishPrompt = false,
   onDismissDriftPrompt
 }) {
@@ -316,6 +317,19 @@ export default function MainScene({
         variant={currentEmotion}
       />
       <StarryCursor enabled={!showDriftPublishPrompt} />
+      {driftPublishFeedback ? (
+        <div className="drift-publish-feedback" role="status" aria-live="polite">
+          <Sparkles size={20} />
+          <div>
+            <strong>已装进漂流瓶</strong>
+            <span>
+              {driftPublishFeedback.source === "local"
+                ? "暂时保存在这片星空里，等服务连上后也能继续体验。"
+                : "它正带着你的心情漂向远方的夜空。"}
+            </span>
+          </div>
+        </div>
+      ) : null}
       <CelebrationBurstLayer
         active={isCelebrationActive}
         variant={currentEmotion === "happy" ? "happy" : "soft"}

@@ -1,4 +1,4 @@
-import { Sparkles, X } from "lucide-react";
+import { Sparkles, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { getEmotionLabel } from "../config/emotionConfig";
 import DriftReplyBox from "./DriftReplyBox";
@@ -42,8 +42,9 @@ const sourceCopy = {
   }
 };
 
-export default function DriftStarDetailModal({ star, onClose, onPickup }) {
+export default function DriftStarDetailModal({ star, onClose, onPickup, onRemove }) {
   const [isPickingUp, setIsPickingUp] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [pickupError, setPickupError] = useState("");
 
   if (!star) return null;
@@ -64,6 +65,20 @@ export default function DriftStarDetailModal({ star, onClose, onPickup }) {
       setPickupError("送出失败了，稍后再试好吗？");
     } finally {
       setIsPickingUp(false);
+    }
+  }
+
+  async function handleRemove() {
+    if (isRemoving || !onRemove || sourceType !== "sentDrift") return;
+    setIsRemoving(true);
+    setPickupError("");
+    try {
+      const result = await onRemove(star.id);
+      if (result?.error) setPickupError(result.error);
+    } catch (error) {
+      setPickupError("收回失败了，稍后再试好吗？");
+    } finally {
+      setIsRemoving(false);
     }
   }
 
@@ -110,9 +125,18 @@ export default function DriftStarDetailModal({ star, onClose, onPickup }) {
           {copy.footer ? <p className="drift-source-note">{copy.footer}</p> : null}
         </div>
 
-        {copy.canReply ? <DriftReplyBox starId={star.id} /> : null}
+        {copy.canReply ? <DriftReplyBox star={star} /> : null}
 
         {pickupError ? <p className="drift-pickup-error">{pickupError}</p> : null}
+
+        {sourceType === "sentDrift" ? (
+          <div className="detail-actions">
+            <button className="secondary-button danger-button" type="button" onClick={handleRemove} disabled={isRemoving} aria-label="收回这只漂流瓶">
+              <Trash2 size={17} />
+              {isRemoving ? "收回中..." : "收回这只漂流瓶"}
+            </button>
+          </div>
+        ) : null}
 
         {sourceType !== "sentDrift" ? (
           <div className="detail-actions">
