@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>指尖星空 / Fingertip Starry Sky Wide Poster</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="poster-page">
+    <main class="poster poster--wide" aria-label="指尖星空项目横版宣传海报">
+      <img class="poster-bg poster-bg--wide" src="./assets/hero-starry-sky.png" alt="" />
+      <div class="night-wash" aria-hidden="true"></div>
+      <div class="star-grain" aria-hidden="true"></div>
+      <img class="wish-trail wish-trail--wide" src="./assets/wish-trail.png" alt="" />
+      <img class="paper-star paper-star--wide" src="./assets/paper-star.png" alt="" />
+
+      <svg class="constellation constellation--wide" viewBox="0 0 1920 1080" aria-hidden="true">
+        <defs>
+          <filter id="wideGlow">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <linearGradient id="trailStroke" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e9fbff" />
+            <stop offset="0.55" stop-color="#9bd9ff" />
+            <stop offset="1" stop-color="#ffe49c" />
+          </linearGradient>
+        </defs>
+        <path class="throw-arc" d="M 660 844 C 858 656, 1018 542, 1288 414 C 1400 360, 1500 288, 1584 198" />
+        <path class="wish-line" d="M 780 666 C 940 590, 1052 620, 1184 492 C 1308 372, 1430 350, 1630 260" />
+        <g class="constellation-net" filter="url(#wideGlow)">
+          <path d="M 1238 190 L 1360 248 L 1498 210 L 1584 316 L 1480 420 L 1328 372 L 1238 190" />
+          <path d="M 1360 248 L 1328 372 L 1480 420" />
+          <circle cx="1238" cy="190" r="6" />
+          <circle cx="1360" cy="248" r="5" />
+          <circle cx="1498" cy="210" r="6" />
+          <circle cx="1584" cy="316" r="5" />
+          <circle cx="1480" cy="420" r="7" />
+          <circle cx="1328" cy="372" r="5" />
+        </g>
+      </svg>
+
+      <section class="title-lockup title-lockup--wide" aria-label="项目标题">
+        <p class="curatorial-tag">INTERACTIVE HEALING EXPERIENCE</p>
+        <h1>
+          <span>指</span>
+          <span>尖</span>
+          <span>星</span>
+          <span>空</span>
+        </h1>
+        <p class="title-en">Fingertip Starry Sky</p>
+        <p class="poetic-line">把情绪折成纸团，投向一片会回应你的星空。</p>
+      </section>
+
+      <section class="wide-keywords" aria-label="核心体验关键词">
+        <span>情绪记录</span>
+        <span>纸团投星</span>
+        <span>星座点亮</span>
+        <span>星轨许愿</span>
+        <span>漂流星星</span>
+        <span>手势互动</span>
+      </section>
+
+      <footer class="exhibit-footer exhibit-footer--wide">
+        <div class="footer-meta">
+          <span>GitHub</span>
+          <strong>Skylar-Jiang/Starry-Sky-at-Your-Fingertips</strong>
+        </div>
+        <div class="footer-meta">
+          <span>Author</span>
+          <strong>Skylar Jiang</strong>
+        </div>
+        <p class="tech-line">React · Vite · MediaPipe · SVG Animation · Healing UI</p>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -9,9 +9,12 @@ import { createStarPlacement } from "../utils/starPlacement";
 import { useAmbientAudio } from "../hooks/useAmbientAudio";
 import { useElementSize } from "../hooks/useElementSize";
 import BaseSkyLayer from "./BaseSkyLayer";
+import CelebrationBurstLayer from "./CelebrationBurstLayer";
+import ComfortQuoteTicker from "./ComfortQuoteTicker";
 import ConstellationView from "./ConstellationView";
 import EnvironmentPanel from "./EnvironmentPanel";
 import GestureExperimentPanel from "./GestureExperimentPanel";
+import MeteorShowerLayer from "./MeteorShowerLayer";
 import ObservationPanel from "./ObservationPanel";
 import PaperNote from "./PaperNote";
 import PresetConstellationLayer from "./PresetConstellationLayer";
@@ -21,6 +24,8 @@ import SceneEffectLayer from "./SceneEffectLayer";
 import SceneEnvironmentLayer from "./SceneEnvironmentLayer";
 import StarLayer from "./StarLayer";
 import DriftStarLayer from "./DriftStarLayer";
+import WishTrailRitual from "./WishTrailRitual";
+import StarryCursor from "./StarryCursor";
 
 const visualSceneKeys = new Set(["rain", "campfire", "waves", "lullaby"]);
 
@@ -33,6 +38,14 @@ function getRequestedSceneKey() {
 function getRequestedObserveState() {
   if (typeof window === "undefined") return false;
   return new URLSearchParams(window.location.search).get("observe") === "1";
+}
+
+function getDriftSourceType(star) {
+  if (star?.sourceType) return star.sourceType;
+  if (star?.driftDirection === "sent") return "sentDrift";
+  if (star?.driftDirection === "received") return "receivedDrift";
+  if (star?.author_id || star?.is_public) return "receivedDrift";
+  return "local";
 }
 
 export default function MainScene({
@@ -75,7 +88,14 @@ export default function MainScene({
   const [selectedEnvironmentSceneKey, setSelectedEnvironmentSceneKey] = useState(() =>
     getRequestedSceneKey() || getDefaultEnvironmentSceneKey(currentEmotion, getRecommendedAudioPreset(currentEmotion))
   );
+  const [meteorEventId, setMeteorEventId] = useState(0);
+  const [isCelebrationActive, setIsCelebrationActive] = useState(false);
+  const [gestureCloudInput, setGestureCloudInput] = useState(null);
+  const [gestureThrowPointer, setGestureThrowPointer] = useState(null);
+  const [gestureWishTrailMode, setGestureWishTrailMode] = useState(false);
   const sceneCoordinateRef = useRef(null);
+  const wishRitualRef = useRef(null);
+  const celebratedStarIdRef = useRef("");
   const bgMusicRef = useRef(null);
   const [isBgMusicPlaying, setIsBgMusicPlaying] = useState(false);
   const sceneSize = useElementSize(sceneCoordinateRef);
@@ -85,6 +105,8 @@ export default function MainScene({
   const visibleStarredRecords = isObservingSky
     ? filterRecordsByDateRange(filterRecordsByEmotion(starredRecords, emotionFilter), dateFilter)
     : starredRecords;
+  const receivedDriftingStars = driftingStars.filter((star) => getDriftSourceType(star) !== "sentDrift");
+  const headerDriftStar = receivedDriftingStars[0] || null;
   useEffect(() => {
     setIsPendingRecordFolded(false);
     setIsPendingRecordThrowing(false);
@@ -174,6 +196,109 @@ export default function MainScene({
 
   const isRecoveryActive = flowPhase === "recoveryPrompt";
 
+  useEffect(() => {
+    const starId = recentCompletedStar?.id || "";
+    if (recentCompletedEmotion !== "happy" || !starId || celebratedStarIdRef.current === starId) return;
+    celebratedStarIdRef.current = starId;
+    setIsCelebrationActive(true);
+  }, [recentCompletedEmotion, recentCompletedStar?.id]);
+
+  function handleWishComplete() {
+    setGestureWishTrailMode(false);
+    setMeteorEventId((id) => id + 1);
+  }
+
+  function handleSimulateWish(source = "simulation") {
+    if (source === "simulation") {
+      wishRitualRef.current?.openDrawingMode?.();
+      setGestureWishTrailMode(true);
+      return;
+    }
+    wishRitualRef.current?.triggerWishRitual(source);
+  }
+
+  function normalizeGesturePoint(point) {
+    const rect = sceneCoordinateRef.current?.getBoundingClientRect?.();
+    if (!point || !rect?.width || !rect?.height) return point || null;
+    return {
+      x: point.x,
+      y: point.y,
+      normalizedX: (point.x - rect.left) / rect.width,
+      normalizedY: (point.y - rect.top) / rect.height,
+      coordinateSpace: "screen"
+    };
+  }
+
+  function handleGestureEvent(event) {
+    if (!event?.type) return;
+
+    if (event.type === "ok_open_letter") {
+      simulatePinch();
+      wishRitualRef.current?.gestureEnd?.(normalizeGesturePoint(event.pointer));
+      return;
+    }
+
+    if (event.type === "fist_hold_start") {
+      if (flowPhase === "paperReady") handleFoldPendingRecord();
+      return;
+    }
+
+    if (event.type === "fist_knead" || event.type === "fist_knead_complete") {
+      if (flowPhase === "recoveryPrompt") {
+        setGestureCloudInput({
+          active: true,
+          type: event.type,
+          point: normalizeGesturePoint(event.pointer),
+          progress: event.debug?.progress,
+          timestamp: event.timestamp
+        });
+      }
+      return;
+    }
+
+    if (event.type === "star_throw_charge") {
+      if (flowPhase === "paperFolded") {
+        setGestureThrowPointer((current) => current || normalizeGesturePoint(event.pointer));
+      }
+      return;
+    }
+
+    if (event.type === "star_throw_release") {
+      if (flowPhase === "paperFolded") {
+        handleThrowPendingRecord();
+        window.setTimeout(() => setGestureThrowPointer(null), 900);
+      }
+      return;
+    }
+
+    if (event.type === "gesture_cancel") {
+      setGestureThrowPointer(null);
+      return;
+    }
+
+    if (event.type === "wish_pose_complete" || event.type === "wish_prayer_complete") {
+      wishRitualRef.current?.openDrawingMode?.();
+      setGestureWishTrailMode(true);
+      return;
+    }
+
+    if (event.type === "wish_trail_start") {
+      wishRitualRef.current?.gestureStart?.(normalizeGesturePoint(event.pointer));
+      setGestureWishTrailMode(true);
+      return;
+    }
+
+    if (event.type === "wish_trail_draw") {
+      wishRitualRef.current?.gestureDraw?.(normalizeGesturePoint(event.pointer));
+      return;
+    }
+
+    if (event.type === "wish_trail_end") {
+      wishRitualRef.current?.gestureEnd?.(normalizeGesturePoint(event.pointer));
+      setGestureWishTrailMode(false);
+    }
+  }
+
   return (
     <main
       className={`main-scene emotion-${currentEmotion} scene-${selectedEnvironmentSceneKey} ${
@@ -186,6 +311,17 @@ export default function MainScene({
       <SceneEnvironmentLayer composition={composition} />
       <SceneEffectLayer emotion={currentEmotion} composition={composition} />
       <div className="scene-overlay" aria-hidden="true" />
+      <MeteorShowerLayer
+        triggerKey={meteorEventId}
+        variant={currentEmotion}
+      />
+      <StarryCursor enabled={!showDriftPublishPrompt} />
+      <CelebrationBurstLayer
+        active={isCelebrationActive}
+        variant={currentEmotion === "happy" ? "happy" : "soft"}
+        origin={recentCompletedStar || "center"}
+        onComplete={() => setIsCelebrationActive(false)}
+      />
       <audio ref={bgMusicRef} src="/assets/bgm.mp4" loop preload="auto" />
 
       <section className="scene-content" aria-label="指尖星空主界面">
@@ -214,12 +350,12 @@ export default function MainScene({
             <button
               className="icon-text-button"
               type="button"
-              onClick={() => onSelectDriftStar(driftingStars[0] || null)}
+              onClick={() => onSelectDriftStar(headerDriftStar)}
               aria-label="查看漂流星星"
-              disabled={isDriftLoading || driftingStars.length === 0}
+              disabled={isDriftLoading || !headerDriftStar}
             >
               <Sparkles size={17} />
-              漂流瓶 {driftingStars.length > 0 ? `(${driftingStars.length})` : ""}
+              漂流瓶 {receivedDriftingStars.length > 0 ? `(${receivedDriftingStars.length})` : ""}
             </button>
             <button className="icon-text-button" type="button" onClick={() => setIsGestureOpen(true)} aria-label="手势实验">
               <Hand size={17} />
@@ -232,12 +368,33 @@ export default function MainScene({
           </div>
         </div>
 
+        <ComfortQuoteTicker currentEmotion={currentEmotion} quiet={isRecoveryActive || flowPhase === "throwing"} />
+        <WishTrailRitual
+          ref={wishRitualRef}
+          currentEmotion={currentEmotion}
+          disabled={isRecoveryActive || showDriftPublishPrompt}
+          onComplete={handleWishComplete}
+          onModeChange={setGestureWishTrailMode}
+        />
+        {currentEmotion === "happy" && !isObservingSky ? (
+          <button
+            className="starflower-button"
+            type="button"
+            onClick={() => setIsCelebrationActive(true)}
+            aria-label="放一朵星花"
+          >
+            <Sparkles size={16} />
+            放一朵星花
+          </button>
+        ) : null}
+
         <div className="constellation-layer sky-region">
           {!showDriftPublishPrompt && (
             <RecoveryInteractionLayer
               emotion={recentCompletedEmotion}
               active={isRecoveryActive}
               targetStar={recentCompletedStar}
+              gestureInput={gestureCloudInput}
               onComplete={onRecoveryComplete}
             />
           )}
@@ -364,6 +521,7 @@ export default function MainScene({
           onFold={handleFoldPendingRecord}
           onThrow={handleThrowPendingRecord}
           onCancel={onCancelPendingRecord}
+          gesturePointer={gestureThrowPointer}
         />
       </section>
 
@@ -382,10 +540,18 @@ export default function MainScene({
       ) : null}
       {isGestureOpen ? (
         <GestureExperimentPanel
-          onClose={() => setIsGestureOpen(false)}
+          onClose={() => {
+            setIsGestureOpen(false);
+          }}
           flowPhase={flowPhase}
-          onSimulatePinch={simulatePinch}
-          onSimulateFold={simulateFold}
+          sceneRef={sceneCoordinateRef}
+          gestureContext={{
+            flowPhase,
+            recoveryInteractionType: isRecoveryActive && recentCompletedEmotion === "anxious" ? "cloudMistReveal" : "",
+            wishTrailMode: gestureWishTrailMode,
+            throwTarget: gestureThrowPointer
+          }}
+          onGestureEvent={handleGestureEvent}
         />
       ) : null}
     </main>

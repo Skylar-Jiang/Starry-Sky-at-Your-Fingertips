@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>指尖星空 / Fingertip Starry Sky Poster</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="poster-page">
+    <main class="poster poster--vertical" aria-label="指尖星空项目竖版宣传海报">
+      <img class="poster-bg" src="./assets/hero-starry-sky.png" alt="" />
+      <div class="readability-wash" aria-hidden="true"></div>
+      <div class="poster-grain" aria-hidden="true"></div>
+
+      <svg class="poster-constellation" viewBox="0 0 1080 1600" aria-hidden="true">
+        <defs>
+          <filter id="nodeGlow">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <path d="M 786 148 L 838 196 L 905 174 L 953 236 L 884 292 L 805 260 L 786 148" />
+        <circle cx="786" cy="148" r="4.5" />
+        <circle cx="838" cy="196" r="3.5" />
+        <circle cx="905" cy="174" r="4.5" />
+        <circle cx="953" cy="236" r="3.5" />
+        <circle cx="884" cy="292" r="5" />
+        <circle cx="805" cy="260" r="4" />
+      </svg>
+
+      <section class="title-zone" aria-label="项目标题">
+        <p class="curatorial-tag">INTERACTIVE HEALING EXPERIENCE</p>
+        <h1 data-title="指尖星空" aria-label="指尖星空">
+          <span>指</span>
+          <span>尖</span>
+          <span>星</span>
+          <span>空</span>
+        </h1>
+        <p class="title-en">Fingertip Starry Sky</p>
+        <p class="main-line">把情绪折成纸团，投向一片会回应你的星空。</p>
+        <div class="project-note" aria-label="项目说明">
+          <p>这是一场围绕情绪记录、手势互动与星空治愈体验展开的交互作品。</p>
+          <p>用户可以把心情折成纸团投向夜空、点亮星座、绘制星轨，</p>
+          <p>并在一片会回应情绪的星空里，留下属于自己的愿望与痕迹。</p>
+        </div>
+      </section>
+
+      <section class="feature-zone" aria-label="四个主功能模块">
+        <article class="feature-note feature-note--emotion">
+          <span class="feature-index">01</span>
+          <h2>情绪记录</h2>
+          <p>写下此刻的心情，让情绪有一处温柔落点。</p>
+        </article>
+        <article class="feature-note feature-note--throw">
+          <span class="feature-index">02</span>
+          <h2>纸团投星</h2>
+          <p>把折好的纸团轻轻投出，让没说出口的话化作一颗星。</p>
+        </article>
+        <article class="feature-note feature-note--constellation">
+          <span class="feature-index">03</span>
+          <h2>星座点亮</h2>
+          <p>在互动中收集微光，点亮属于自己的星座轨迹。</p>
+        </article>
+        <article class="feature-note feature-note--wish">
+          <span class="feature-index">04</span>
+          <h2>星轨许愿</h2>
+          <p>拖出一段缓缓发亮的星轨，把愿望留在夜空深处。</p>
+        </article>
+      </section>
+
+      <p class="secondary-line">漂流星星 / 手势互动</p>
+
+      <footer class="poster-footer" aria-label="项目展签信息">
+        <div class="footer-item footer-item--repo">
+          <span>GitHub</span>
+          <strong>Skylar-Jiang/Starry-Sky-at-Your-Fingertips</strong>
+        </div>
+        <div class="footer-item">
+          <span>Author</span>
+          <strong>Skylar Jiang</strong>
+        </div>
+        <p class="tech-line">React · Vite · MediaPipe · SVG Animation · Healing UI</p>
+        <div class="qr-code" aria-label="QR CODE 占位">
+          <span>QR<br />CODE</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

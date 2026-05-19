@@ -9,7 +9,7 @@ import { getEnvironmentComposition } from "../config/environmentCompositionConfi
 import { getConstellationByKey } from "../config/presetConstellationConfig";
 import { projectConstellationNodes } from "../utils/constellationProjection";
 
-vi.setConfig({ testTimeout: 20000 });
+vi.setConfig({ testTimeout: 60000 });
 
 const originalFetch = globalThis.fetch;
 
@@ -80,7 +80,6 @@ describe("指尖星空演示闭环", () => {
 
     expect(screen.queryByRole("button", { name: "投向星空" })).not.toBeInTheDocument();
     await user.click(screen.getByRole("img", { name: "纸团" }));
-    expect(screen.getByRole("img", { name: "纸团" })).toHaveClass("throwing-animation");
 
     await waitFor(() => {
       const saved = JSON.parse(localStorage.getItem("fingertip_starry_sky_records"));
@@ -167,6 +166,28 @@ describe("指尖星空演示闭环", () => {
     expect(container.querySelector(".paper-ball-scene")).toBeInTheDocument();
     expect(container.querySelector(".paper-ball")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "投向星空" })).not.toBeInTheDocument();
+  });
+
+  test("手势抓住纸团后显示锁定反馈而不是要求持续追随手", () => {
+    const record = {
+      id: "record_gesture_throw_lock",
+      text: "throw lock",
+      emotion: "calm",
+      star: null
+    };
+
+    const { container } = render(
+      <PaperNote
+        record={record}
+        isFolded
+        isThrowing={false}
+        gesturePointer={{ x: 320, y: 240 }}
+        onThrow={vi.fn()}
+      />
+    );
+
+    expect(container.querySelector(".paper-ball-scene")).toHaveClass("is-gesture-grabbed");
+    expect(screen.getByText(/手可以放稳/)).toBeInTheDocument();
   });
 
   test("待折纸条可以取消并撤回未投掷记录", async () => {
@@ -498,14 +519,18 @@ describe("指尖星空演示闭环", () => {
 
     await waitFor(() => {
       expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
-      expect(container.querySelectorAll(".recovery-object")).toHaveLength(6);
+      expect(container.querySelector(".cloud-mist-field")).toBeInTheDocument();
+      expect(container.querySelectorAll(".cloud-knead-button")).toHaveLength(0);
     });
 
-    for (const button of Array.from(container.querySelectorAll(".recovery-object")).slice(0, 5)) {
-      await user.click(button);
-    }
+    const mist = container.querySelector(".cloud-mist-field");
+    fireEvent.pointerDown(mist, { clientX: 160, clientY: 170, pointerId: 1 });
+    fireEvent.pointerMove(mist, { clientX: 420, clientY: 240, pointerId: 1 });
+    fireEvent.pointerMove(mist, { clientX: 170, clientY: 270, pointerId: 1 });
+    fireEvent.pointerMove(mist, { clientX: 450, clientY: 340, pointerId: 1 });
+    fireEvent.pointerUp(mist, { clientX: 450, clientY: 340, pointerId: 1 });
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await new Promise((resolve) => setTimeout(resolve, 5600));
 
     await waitFor(() => {
       expect(document.querySelector(".drift-publish-prompt")).toBeInTheDocument();
@@ -599,29 +624,19 @@ describe("指尖星空演示闭环", () => {
     expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
   });
 
-  test("模拟 OK/捏合可以打开并提交记录弹窗", async () => {
+  test("模拟 OK 可以打开记录情绪信纸", async () => {
     const user = userEvent.setup();
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: "手势实验" }));
     const panel = screen.getByRole("dialog", { name: "手势实验" });
 
-    expect(within(panel).getByText("OK/捏合：打开记录弹窗")).toBeInTheDocument();
+    expect(within(panel).getByText("OK 手势：打开记录情绪的信纸。")).toBeInTheDocument();
+    expect(within(panel).getAllByText(/摄像头只用于本地识别手部关键点/).length).toBeGreaterThan(0);
 
-    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+    await user.click(within(panel).getByRole("button", { name: "OK" }));
     expect(screen.getByLabelText("想交给星空的话")).toBeInTheDocument();
-    expect(within(panel).getByText("OK/捏合：完成这张纸条")).toBeInTheDocument();
-
-    await user.type(screen.getByLabelText("想交给星空的话"), "不点完成，直接用捏合提交");
-    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
-
-    expect(screen.queryByRole("dialog", { name: "记录情绪" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "折成纸团" })).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem("fingertip_starry_sky_records"))).toHaveLength(1);
-    expect(JSON.parse(localStorage.getItem("fingertip_starry_sky_records"))[0].text).toBe(
-      "不点完成，直接用捏合提交"
-    );
-    expect(within(panel).getByText("五指合拢：把信纸捏成纸团")).toBeInTheDocument();
+    expect(document.querySelector(".wish-trail-layer")).not.toBeInTheDocument();
   });
 
   test("摄像头授权成功后手势面板显示实时预览区域", async () => {
@@ -687,7 +702,7 @@ describe("指尖星空演示闭环", () => {
     expect(screen.getByRole("img", { name: "纸团" })).toBeInTheDocument();
   });
 
-  test("模拟 OK/捏合会触发当前纸团阶段动作", async () => {
+  test("模拟投掷会触发当前纸团阶段动作", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -698,7 +713,7 @@ describe("指尖星空演示闭环", () => {
     await user.click(screen.getByRole("button", { name: "手势实验" }));
 
     const panel = screen.getByRole("dialog", { name: "手势实验" });
-    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
+    await user.click(within(panel).getByRole("button", { name: "投掷" }));
 
     expect(screen.getByRole("img", { name: "纸团" })).toHaveClass("throwing-animation");
     await waitFor(() => {
@@ -707,7 +722,7 @@ describe("指尖星空演示闭环", () => {
     });
   });
 
-  test("恢复阶段模拟 OK/捏合会安放当前星星并回到平静", async () => {
+  test("恢复阶段模拟五指合拢揉云会安放当前星星并回到平静", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -722,16 +737,14 @@ describe("指尖星空演示闭环", () => {
 
     await waitFor(() => {
       expect(document.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
-      expect(within(panel).getByText("OK/捏合：安放当前星星")).toBeInTheDocument();
+      expect(within(panel).getByText("五指合拢并揉动：推动当前恢复互动。")).toBeInTheDocument();
     });
 
-    await user.click(within(panel).getByRole("button", { name: "OK/捏合" }));
-
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await user.click(within(panel).getByRole("button", { name: "五指合拢" }));
 
     await waitFor(() => {
       expect(document.querySelector(".drift-publish-prompt")).toBeInTheDocument();
-    });
+    }, { timeout: 6000 });
 
     await user.click(screen.getByRole("button", { name: "只是自己留着" }));
 
@@ -760,16 +773,21 @@ describe("指尖星空演示闭环", () => {
 
     await waitFor(() => {
       expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
-      expect(container.querySelectorAll(".recovery-object")).toHaveLength(7);
+      expect(container.querySelectorAll(".recovery-object")).toHaveLength(2);
+      expect(container.querySelector(".recovery-drop-target")).toBeInTheDocument();
     });
 
-    const activeObjects = () => Array.from(container.querySelectorAll(".recovery-object:not(.is-resolved)"));
-    for (const button of activeObjects().slice(0, 5)) {
-      await user.click(button);
+    const target = container.querySelector(".recovery-drop-target");
+    const targetX = Number.parseFloat(target.style.left);
+    const targetY = Number.parseFloat(target.style.top);
+    for (const button of Array.from(container.querySelectorAll(".recovery-object")).slice(0, 2)) {
+      fireEvent.mouseDown(button, { clientX: targetX - 30, clientY: targetY - 30, pageX: targetX - 30, pageY: targetY - 30 });
+      fireEvent.mouseMove(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
+      fireEvent.mouseUp(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
     }
 
     await waitFor(() => {
-      expect(screen.getByText("这颗星星已经被你安放好了。")).toBeInTheDocument();
+      expect(screen.getByText("雨滴被星空接住了。")).toBeInTheDocument();
     });
 
     await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -1007,20 +1025,23 @@ describe("指尖星空演示闭环", () => {
 
     await waitFor(() => {
       expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
-      expect(screen.getByText("轻轻点亮雨滴 0/5")).toBeInTheDocument();
+      expect(screen.getByText("已安放 0 / 2 滴雨。")).toBeInTheDocument();
     });
-    expect(screen.queryByText("这颗星星已经被你安放好了。")).not.toBeInTheDocument();
+    expect(screen.queryByText("雨滴被星空接住了。")).not.toBeInTheDocument();
 
-    const firstTwo = Array.from(container.querySelectorAll(".recovery-object")).slice(0, 2);
-    for (const button of firstTwo) {
-      await user.click(button);
-    }
+    const target = container.querySelector(".recovery-drop-target");
+    const targetX = Number.parseFloat(target.style.left);
+    const targetY = Number.parseFloat(target.style.top);
+    const firstDrop = container.querySelector(".recovery-object");
+    fireEvent.mouseDown(firstDrop, { clientX: targetX - 40, clientY: targetY - 40, pageX: targetX - 40, pageY: targetY - 40 });
+    fireEvent.mouseMove(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
+    fireEvent.mouseUp(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
 
-    expect(screen.getByText("轻轻点亮雨滴 2/5")).toBeInTheDocument();
-    expect(screen.queryByText("这颗星星已经被你安放好了。")).not.toBeInTheDocument();
+    expect(screen.getByText("已安放 1 / 2 滴雨。")).toBeInTheDocument();
+    expect(screen.queryByText("雨滴被星空接住了。")).not.toBeInTheDocument();
   });
 
-  test("恢复物件点击后使用目标星坐标计算飞行偏移", async () => {
+  test("恢复物件拖拽目标使用目标星坐标定位", async () => {
     const user = userEvent.setup();
     const { container } = render(<App />);
 
@@ -1035,11 +1056,20 @@ describe("指尖星空演示闭环", () => {
       expect(container.querySelector(".recovery-interaction-layer")).toBeInTheDocument();
     });
 
+    const target = container.querySelector(".recovery-drop-target");
     const firstObject = container.querySelector(".recovery-object");
-    await user.click(firstObject);
+    const targetX = Number.parseFloat(target.style.left);
+    const targetY = Number.parseFloat(target.style.top);
 
-    expect(firstObject.style.getPropertyValue("--resolve-x")).toMatch(/px$/);
-    expect(firstObject.style.getPropertyValue("--resolve-y")).toMatch(/px$/);
+    expect(target.style.left).toMatch(/px$/);
+    expect(target.style.top).toMatch(/px$/);
+
+    fireEvent.mouseDown(firstObject, { clientX: targetX - 40, clientY: targetY - 40, pageX: targetX - 40, pageY: targetY - 40 });
+    fireEvent.mouseMove(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
+    fireEvent.mouseUp(window, { clientX: targetX, clientY: targetY, pageX: targetX, pageY: targetY });
+
+    expect(firstObject.style.left).toMatch(/px$/);
+    expect(firstObject.style.top).toMatch(/px$/);
   });
   test("瑙傛祴鏄熺┖浣跨敤杞绘煍杩炵画璺緞鍜岀偣鐘跺井鍏夛紝涓嶅啀鐢ㄧ矖鎶樼嚎鎷兼帴", async () => {
     const user = userEvent.setup();

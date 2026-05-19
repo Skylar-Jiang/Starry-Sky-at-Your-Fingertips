@@ -295,10 +295,12 @@ export default function App() {
       id: `mock_drift_${Date.now()}`,
       text: textToPublish || "来自指尖星空的心情碎片",
       emotion: emotionToPublish || "calm",
-      constellationKey: starToPublish.constellationKey,
-      starX: starToPublish.x,
-      starY: starToPublish.y,
+      constellation_key: starToPublish.constellationKey,
+      star_x: starToPublish.x,
+      star_y: starToPublish.y,
       drift_count: 0,
+      sourceType: "sentDrift",
+      driftDirection: "sent",
       is_public: true,
       created_at: new Date().toISOString().replace("T", " ").slice(0, 19)
     };

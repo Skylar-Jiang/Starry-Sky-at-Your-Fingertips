@@ -1,47 +1,33 @@
 import { useEffect, useRef, useState } from "react";
+import { microInteractionConfig } from "../config/microInteractionConfig";
+import {
+  createPrayerHoldTracker,
+  detectPinch as detectPinchState,
+  detectPrayerGesture,
+  getPalmCenter as getGesturePalmCenter,
+  landmarkDistance,
+  mapLandmarkToElementPoint
+} from "../utils/gestureUtils";
 
 const HAND_MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task";
 const WASM_BASE_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm";
 const DEFAULT_COOLDOWN_MS = 900;
-
 const fingerTipIndexes = [4, 8, 12, 16, 20];
 
-export function landmarkDistance(a, b) {
-  if (!a || !b) {
-    return Number.POSITIVE_INFINITY;
-  }
-
-  return Math.hypot(a.x - b.x, a.y - b.y, (a.z || 0) - (b.z || 0));
-}
+export { landmarkDistance };
 
 export function detectPinch(landmarks, threshold = 0.075) {
   return landmarkDistance(landmarks?.[4], landmarks?.[8]) < threshold;
 }
 
 export function getPalmCenter(landmarks) {
-  const palmPoints = [landmarks?.[0], landmarks?.[5], landmarks?.[9], landmarks?.[13], landmarks?.[17]].filter(Boolean);
-
-  if (!palmPoints.length) {
-    return null;
-  }
-
-  return palmPoints.reduce(
-    (center, point) => ({
-      x: center.x + point.x / palmPoints.length,
-      y: center.y + point.y / palmPoints.length,
-      z: center.z + (point.z || 0) / palmPoints.length
-    }),
-    { x: 0, y: 0, z: 0 }
-  );
+  return getGesturePalmCenter(landmarks);
 }
 
 export function detectFiveFingerClose(landmarks, averageThreshold = 0.18) {
   const palmCenter = getPalmCenter(landmarks || []);
-
-  if (!palmCenter) {
-    return false;
-  }
+  if (!palmCenter) return false;
 
   const averageTipDistance =
     fingerTipIndexes.reduce((total, index) => total + landmarkDistance(landmarks[index], palmCenter), 0) /
@@ -51,14 +37,8 @@ export function detectFiveFingerClose(landmarks, averageThreshold = 0.18) {
 }
 
 function detectGesture(landmarks) {
-  if (detectFiveFingerClose(landmarks)) {
-    return "fiveFingerClose";
-  }
-
-  if (detectPinch(landmarks)) {
-    return "pinch";
-  }
-
+  if (detectFiveFingerClose(landmarks)) return "fiveFingerClose";
+  if (detectPinch(landmarks)) return "pinch";
   return "";
 }
 
@@ -66,14 +46,28 @@ export function useHandGestureRecognition({
   videoRef,
   enabled,
   onGesture,
+  onPrayerDetected,
+  onFrameGesture,
+  overlayRef,
   cooldownMs = DEFAULT_COOLDOWN_MS,
   modelUrl = HAND_MODEL_URL,
-  wasmBaseUrl = WASM_BASE_URL
+  wasmBaseUrl = WASM_BASE_URL,
+  numHands = 2
 }) {
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
   const [lastGesture, setLastGesture] = useState("");
+  const [gestureDebug, setGestureDebug] = useState({
+    handsCount: 0,
+    prayerScore: 0,
+    prayerProgress: 0,
+    pinchDetected: false,
+    message: microInteractionConfig.gesture.prayer.statusMessages.noCamera
+  });
   const lastTriggerRef = useRef(0);
+  const prayerTrackerRef = useRef(createPrayerHoldTracker(microInteractionConfig.gesture.prayer));
+  const previousPinchingRef = useRef(false);
+  const smoothedPinchRef = useRef(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -85,6 +79,12 @@ export function useHandGestureRecognition({
         setStatus("idle");
         setMessage("");
         setLastGesture("");
+        setGestureDebug((value) => ({
+          ...value,
+          handsCount: 0,
+          prayerProgress: 0,
+          message: microInteractionConfig.gesture.prayer.statusMessages.noCamera
+        }));
         return;
       }
 
@@ -93,10 +93,7 @@ export function useHandGestureRecognition({
 
       try {
         const { FilesetResolver, HandLandmarker } = await import("@mediapipe/tasks-vision");
-
-        if (isCancelled) {
-          return;
-        }
+        if (isCancelled) return;
 
         const vision = await FilesetResolver.forVisionTasks(wasmBaseUrl);
         handLandmarker = await HandLandmarker.createFromOptions(vision, {
@@ -105,7 +102,7 @@ export function useHandGestureRecognition({
             delegate: "GPU"
           },
           runningMode: "VIDEO",
-          numHands: 1
+          numHands
         });
 
         if (isCancelled) {
@@ -118,18 +115,90 @@ export function useHandGestureRecognition({
 
         const readFrame = () => {
           const video = videoRef.current;
-
-          if (!video || isCancelled) {
-            return;
-          }
+          if (!video || isCancelled) return;
 
           if (video.readyState >= 2) {
-            const result = handLandmarker.detectForVideo(video, performance.now());
-            const gestureName = detectGesture(result.landmarks?.[0]);
-            const now = performance.now();
+            const timestamp = performance.now();
+            const result = handLandmarker.detectForVideo(video, timestamp);
+            const hands = result.landmarks || [];
+            const gestureName = detectGesture(hands[0]);
+            const prayerEnabled = microInteractionConfig.gesture.prayer.enabled;
+            const prayerState = prayerEnabled
+              ? detectPrayerGesture(hands, microInteractionConfig.gesture.prayer)
+              : {
+                  handsCount: hands.length,
+                  prayerScore: 0,
+                  isPraying: false,
+                  reason: "disabled"
+                };
+            const prayerHoldState = prayerEnabled
+              ? prayerTrackerRef.current.update({
+                  prayerScore: prayerState.prayerScore,
+                  timestamp
+                })
+              : { holdProgress: 0, triggered: false };
+            const pinchState = detectPinchState(hands[0] || [], {
+              previousPinching: previousPinchingRef.current,
+              startThreshold: microInteractionConfig.gesture.pinch.startThreshold,
+              endThreshold: microInteractionConfig.gesture.pinch.endThreshold
+            });
+            previousPinchingRef.current = pinchState.isPinching;
 
-            if (gestureName && now - lastTriggerRef.current >= cooldownMs) {
-              lastTriggerRef.current = now;
+            let pinchPoint = null;
+            if (pinchState.midpoint && overlayRef?.current) {
+              const rect = overlayRef.current.getBoundingClientRect();
+              const mapped = mapLandmarkToElementPoint(pinchState.midpoint, rect);
+              const smoothing = microInteractionConfig.gesture.pinch.smoothing;
+              pinchPoint = smoothedPinchRef.current
+                ? {
+                    x: smoothedPinchRef.current.x * smoothing + mapped.x * (1 - smoothing),
+                    y: smoothedPinchRef.current.y * smoothing + mapped.y * (1 - smoothing)
+                  }
+                : mapped;
+              smoothedPinchRef.current = pinchPoint;
+            }
+
+            const messages = microInteractionConfig.gesture.prayer.statusMessages;
+            const debugMessage = !prayerEnabled
+              ? hands.length === 0
+                ? messages.noHands
+                : pinchState.isPinching
+                  ? "已看到 OK/捏合，准备触发当前阶段动作。"
+                  : "已识别到手的位置，可以尝试 OK/捏合。"
+              : prayerHoldState.triggered
+                ? messages.success
+                : prayerState.handsCount === 0
+                  ? messages.noHands
+                  : prayerState.handsCount === 1
+                    ? messages.oneHand
+                    : prayerState.reason === "tooFar"
+                      ? messages.tooFar
+                      : prayerState.isPraying
+                        ? `保持实验手势 ${Math.round(prayerHoldState.holdProgress * 100)}%`
+                        : messages.handsReady;
+
+            const nextDebug = {
+              handsCount: prayerState.handsCount,
+              prayerScore: prayerState.prayerScore,
+              prayerProgress: prayerHoldState.holdProgress,
+              pinchDetected: pinchState.isPinching,
+              pinchPoint,
+              message: debugMessage
+            };
+            setGestureDebug(nextDebug);
+            onFrameGesture?.({
+              hands,
+              prayerState,
+              prayerHoldState,
+              pinchState,
+              pinchPoint,
+              pinchPointNormalized: pinchState.midpoint || null
+            });
+
+            if (prayerEnabled && prayerHoldState.triggered) onPrayerDetected?.("gesture");
+
+            if (gestureName && timestamp - lastTriggerRef.current >= cooldownMs) {
+              lastTriggerRef.current = timestamp;
               setLastGesture(gestureName);
               onGesture?.(gestureName);
             }
@@ -151,16 +220,15 @@ export function useHandGestureRecognition({
 
     return () => {
       isCancelled = true;
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       handLandmarker?.close?.();
     };
-  }, [cooldownMs, enabled, modelUrl, onGesture, videoRef, wasmBaseUrl]);
+  }, [cooldownMs, enabled, modelUrl, numHands, onFrameGesture, onGesture, onPrayerDetected, overlayRef, videoRef, wasmBaseUrl]);
 
   return {
     status,
     message,
-    lastGesture
+    lastGesture,
+    gestureDebug
   };
 }

@@ -8,7 +8,8 @@ export default function PaperNote({
   isThrowing = false,
   onFold,
   onThrow,
-  onCancel
+  onCancel,
+  gesturePointer = null
 }) {
   if (!record) return null;
   const config = emotionConfig[emotion || record.emotion] || emotionConfig.calm;
@@ -32,7 +33,16 @@ export default function PaperNote({
           </div>
         </div>
       ) : (
-        <div className={isThrowing ? "paper-ball-scene is-throwing" : "paper-ball-scene"}>
+        <div
+          className={`${isThrowing ? "paper-ball-scene is-throwing" : "paper-ball-scene"} ${
+            gesturePointer && !isThrowing ? "is-gesture-grabbed" : ""
+          }`}
+          style={
+            gesturePointer && !isThrowing
+              ? { "--gesture-grab-x": `${gesturePointer.x}px`, "--gesture-grab-y": `${gesturePointer.y}px` }
+              : null
+          }
+        >
           {isThrowing && targetStar ? (
             <span
               className="paper-meteor-trail"
@@ -50,7 +60,11 @@ export default function PaperNote({
             className={`paper-ball-img ${isThrowing ? "throwing-animation" : ""}`}
             onClick={onThrow}
           />
-          {!isThrowing ? <p className="paper-throw-hint">点击纸团，用力投向星空吧！</p> : null}
+          {!isThrowing ? (
+            <p className="paper-throw-hint">
+              {gesturePointer ? "已抓住。手可以放稳，向上推一下或点击投出。" : "点击纸团，用力投向星空吧！"}
+            </p>
+          ) : null}
         </div>
       )}
     </aside>

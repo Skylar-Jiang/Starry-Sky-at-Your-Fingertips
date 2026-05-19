@@ -1,6 +1,46 @@
 import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { getEmotionLabel } from "../config/emotionConfig";
+import DriftReplyBox from "./DriftReplyBox";
+
+function getSourceType(star) {
+  if (star?.sourceType) return star.sourceType;
+  if (star?.driftDirection === "sent") return "sentDrift";
+  if (star?.driftDirection === "received") return "receivedDrift";
+  if (star?.author_id || star?.is_public) return "receivedDrift";
+  return "local";
+}
+
+const sourceCopy = {
+  sentDrift: {
+    eyebrow: "🫧 正在漂流",
+    title: "你送去漂流的星星",
+    hint: "这颗心情碎片正在星河里慢慢漂流。",
+    footer: "这是你送出的星星，正在等待远方回应。也许有一天，它会被另一片星空温柔读到。",
+    canReply: false
+  },
+  receivedDrift: {
+    eyebrow: "🫧 漂流而来的星星",
+    title: "来自某片遥远的星空",
+    hint: "这颗星星从别人的夜空漂流到了这里。",
+    footer: "你可以给它留下一盏很小的灯。",
+    canReply: true
+  },
+  demoReceivedDrift: {
+    eyebrow: "🫧 漂流而来的星星",
+    title: "来自某片遥远的星空",
+    hint: "这颗星星从别人的夜空漂流到了这里。",
+    footer: "你可以给它留下一盏很小的灯。",
+    canReply: true
+  },
+  local: {
+    eyebrow: "星星回看",
+    title: "你的星星",
+    hint: "这颗星星保存在你的夜空里。",
+    footer: "",
+    canReply: false
+  }
+};
 
 export default function DriftStarDetailModal({ star, onClose, onPickup }) {
   const [isPickingUp, setIsPickingUp] = useState(false);
@@ -8,21 +48,20 @@ export default function DriftStarDetailModal({ star, onClose, onPickup }) {
 
   if (!star) return null;
 
+  const sourceType = getSourceType(star);
+  const copy = sourceCopy[sourceType] || sourceCopy.receivedDrift;
   const recordDate = star.created_at ? String(star.created_at).slice(0, 10) : "未知日期";
-  const recordTime = star.created_at ? String(star.created_at).slice(11, 19) : "";
   const driftCount = Number(star.drift_count) || 0;
 
   async function handlePickup() {
-    if (isPickingUp || !onPickup) return;
+    if (isPickingUp || !onPickup || sourceType === "sentDrift") return;
     setIsPickingUp(true);
     setPickupError("");
     try {
       const result = await onPickup(star.id);
-      if (result && result.error) {
-        setPickupError(result.error);
-      }
+      if (result?.error) setPickupError(result.error);
     } catch (error) {
-      setPickupError("送出失败了，稍后再试吧");
+      setPickupError("送出失败了，稍后再试好吗？");
     } finally {
       setIsPickingUp(false);
     }
@@ -35,18 +74,13 @@ export default function DriftStarDetailModal({ star, onClose, onPickup }) {
 
   return (
     <div className="modal-backdrop" onClick={handleClose}>
-      <section className="star-detail-modal" role="dialog" aria-label="漂流星星详情" onClick={(e) => e.stopPropagation()}>
+      <section className="star-detail-modal drift-detail-modal" role="dialog" aria-label="漂流星星详情" onClick={(e) => e.stopPropagation()}>
         <div className="modal-heading">
           <div>
-            <p className="eyebrow">🫧 漂流而来的星星</p>
-            <h2>来自某片遥远的星空</h2>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h2>{copy.title}</h2>
           </div>
-          <button
-            className="icon-button"
-            type="button"
-            onClick={handleClose}
-            aria-label="关闭漂流星星详情"
-          >
+          <button className="icon-button" type="button" onClick={handleClose} aria-label="关闭漂流星星详情">
             <X size={20} />
           </button>
         </div>
@@ -69,30 +103,25 @@ export default function DriftStarDetailModal({ star, onClose, onPickup }) {
         <p className="detail-text">{star.text}</p>
 
         <div className="drift-star-footer">
-          <p className="drift-star-hint">
+          <p className={`drift-star-hint drift-source-${sourceType}`}>
             <Sparkles size={14} />
-            这颗星星从别人的夜空漂流到了这里
+            {copy.hint}
           </p>
+          {copy.footer ? <p className="drift-source-note">{copy.footer}</p> : null}
         </div>
 
-        {pickupError && (
-          <p style={{ color: "#ffb2b2", fontSize: "0.85rem", fontWeight: 800, margin: "8px 0" }}>
-            {pickupError}
-          </p>
-        )}
+        {copy.canReply ? <DriftReplyBox starId={star.id} /> : null}
 
-        <div className="detail-actions">
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={handlePickup}
-            disabled={isPickingUp}
-            aria-label="送它继续漂流"
-          >
-            <Sparkles size={17} />
-            {isPickingUp ? "送出中..." : "送它继续漂流"}
-          </button>
-        </div>
+        {pickupError ? <p className="drift-pickup-error">{pickupError}</p> : null}
+
+        {sourceType !== "sentDrift" ? (
+          <div className="detail-actions">
+            <button className="secondary-button" type="button" onClick={handlePickup} disabled={isPickingUp} aria-label="送它继续漂流">
+              <Sparkles size={17} />
+              {isPickingUp ? "送出中..." : "送它继续漂流"}
+            </button>
+          </div>
+        ) : null}
       </section>
     </div>
   );
