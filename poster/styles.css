@@ -428,7 +428,7 @@ h2 {
   line-height: 1.28;
 }
 
-.tech-line {
+.poster-footer .tech-line {
   position: absolute;
   left: 0;
   bottom: 66px;
@@ -573,6 +573,17 @@ h2 {
   display: block;
   font-size: 18px;
   font-weight: 700;
+}
+
+.exhibit-footer--wide .tech-line {
+  position: static;
+  width: auto;
+  margin: 0;
+  color: rgba(190, 218, 238, 0.68);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
